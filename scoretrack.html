@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ζωντανός Αγώνας Τένις - Διορθωμένο</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+
+    #tournamentInfo {
+      text-align: center;
+      margin-bottom: 50px;
+     
+    }
+
+    #courtImage {
+      width: 90%;
+      max-width: 800px;
+      height: 400px;
+      margin: 0 auto;
+      border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 20px #000;
+    }
+
+    .scoreboard {
+      display: inline-block;
+      background: white;
+      border-radius: 16px;
+      padding: 20px 0 20px 20px;
+      box-shadow: 0 0 16px #000;
+      font-family: Arial, sans-serif;
+      width: auto;
+      max-width: 850px;
+      margin: 50px auto 0;
+      font-size: 1.5rem;
+      margin-left: 5%;
+      padding-right: 50px;
+    }
+
+    .scores-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      width: calc(var(--numSets) * 42px + 70px + 12px);
+      min-width: fit-content;
+    }
+
+    .scoreboard-row {
+      display: flex;
+      align-items: center;
+      margin: 12px 24px;
+      justify-content: flex-start;
+      gap: 0;
+      position: relative;
+    }
+
+    .player-name {
+      background-color: #006400;
+      color: white;
+      padding: 14px 22px;
+      min-width: 200px;
+      position: relative;
+      font-weight: bold;
+      font-size: 1.6rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 250px;
+      margin-right: 8px;
+    }
+
+    .sets-container {
+      display: flex;
+      gap: 0;
+      flex-grow: 0;
+      justify-content: flex-start;
+      margin-right: 8px;
+    }
+
+    .set-score {
+      background-color: #4b0082;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 8px 0 0 8px;
+      font-size: 1.6rem;
+      min-width: 42px;
+      text-align: center;
+      border-right: 1px solid #fff;
+    }
+
+    .set-score:last-child {
+      border-radius: 0 8px 8px 0;
+      border-right: none;
+    }
+
+    .game-score-container {
+      display: flex;
+      align-items: center;
+      min-width: 70px;
+      justify-content: flex-start;
+      color: #006400;
+      font-weight: bold;
+      font-size: 1.8rem;
+      margin-right: 12px;
+      position: relative;
+    }
+
+    .game-score {
+      min-width: 42px;
+      text-align: center;
+    }
+
+    #serveButton {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 2rem;
+      color: #006400;
+      user-select: none;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      padding: 0;
+      margin-left: 10px;
+    }
+
+ /* 🔙 Κουμπί Πίσω στην Αρχική */
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 50px;
+  padding: 19px 29px;
+  font-size: 1.7rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.back-button:hover {
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+/* 📊 Κουμπί Στατιστικών */
+#statsButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+   background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 22px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+#statsButton:hover {
+ background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+#statsButton:active {
+  transform: scale(0.95);
+}
+
+    .dual-action-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 40px auto 0;
+      max-width: 850px;
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+ /* Player column */
+.player-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  background-color: #1f1f1f;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+  height: 100%;
+  min-height: 1100px; /* μεγάλο ύψος για demo */
+  color: #fff;
+  padding: 20px;
+}
+
+/* Container κουμπιών που γεμίζει όλο το player-column */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;             /* γεμίζει όλο το διαθέσιμο ύψος */
+  gap: 20px;                /* μικρό διάστημα ανάμεσα στα κουμπιά */
+}
+
+/* Κουμπιά που μοιράζονται το ύψος ισομερώς */
+.button-container .action-btn {
+  background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 2.4rem;
+  font-weight: bold;
+  width: 100%;
+  flex-grow: 1;             /* ↑ γεμίζει όσο ύψος μπορεί */
+  padding: 0;               /* το flex-grow καθορίζει το ύψος */
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 14px rgba(5,238,16,0.7);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.button-container .action-btn:hover {
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+.button-container .action-btn:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+
+}
+
+
+    .serve-ball {
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+    
+
+
+/* Responsive */
+@media (max-width: 480px) {
+    .game-score-history {
+        flex: 1 1 100%;
+        text-align: center;
+        font-size: 0.85em;
+    }
+}
+
+.player-name-wrapper h3 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #05ee10;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    transition: color 0.3s, transform 0.3s;
+}
+
+.player-name-wrapper h3:hover {
+    color: #32cd32;
+    transform: scale(1.05);
+    cursor: default;
+}
+/* Κοινό στυλ για όλα τα κουμπιά πάνω δεξιά */
+.stats-save-button {
+  position: fixed;
+  top: 20px;
+  background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 50px;
+  padding: 19px 32px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+  transition: all 0.3s ease;
+  z-index: 1000;
+ 
+}
+
+.stats-save-button:hover {
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+.stats-save-button:active {
+  transform: scale(0.95);
+}
+
+/* Θέση των κουμπιών οριζόντια, μικρό διάστημα */
+#gameHistoryButton {
+  right: 320px; /* πιο αριστερά */
+  top: 20px;
+
+}
+
+#saveMatchButton {
+  right: 160px; /* πιο κοντά στο Stats */
+  top: 20px;
+}
+
+#statsButton {
+  right: 20px;
+  top: 20px;
+}
+
+
+/* Ξεχωριστή τοποθέτηση δεξιά ή αριστερά */
+
+
+/* Όταν είναι ενεργό (πρώτο fault) */
+.fault-active {
+  background: linear-gradient(145deg, #ff0000, #cc0000) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255,0,0,0.6) !important;
+  transform: scale(1.02) !important;
+}
+.fault-active:hover {
+  background: linear-gradient(145deg, #ff4d4d, #ff0000) !important;
+  transform: scale(1.05) !important;
+}
+.fault-active:active {
+  background: linear-gradient(145deg, #990000, #cc0000) !important;
+  transform: scale(1.05) !important;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4) !important;
+}
+#saveMatchButton {
+  position: fixed;
+  top: 20px;
+  right: 160px; /* 👉 το φέρνει δίπλα στο Stats button */
+  background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 22px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+#saveMatchButton:hover {
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+#saveMatchButton:active {
+  transform: scale(0.95);
+}
+#topButtonsContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px; /* μικρή απόσταση μεταξύ κουμπιών */
+  z-index: 1000;
+}
+
+#topButtonsContainer .stats-save-button {
+  position: static; /* δεν χρειάζεται fixed αφού ο container είναι fixed */
+}
+
+
+
+
+
+
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 50, 0, 0.85); /* σκοτεινό πράσινο overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+
+/* Save button στο modal */
+.modal .save-btn {
+  background: linear-gradient(145deg, #32cd32, #7fff00); /* Wimbledon πράσινο gradient */
+  color: #ffffff; /* σκούρο κείμενο για contrast */
+  border: 2px solid #ffffff;
+  border-radius: 16px;
+  padding: 28px 46px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal .save-btn:hover {
+  background: linear-gradient(145deg, #7fff00, #32cd32); /* αντιστροφή gradient */
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.modal .save-btn:active {
+  background: linear-gradient(145deg, #228b22, #32cd32);
+  transform: scale(0.97);
+}
+
+/* Cancel button στο modal */
+.modal .cancel-btn {
+  background: #b80404; /* κίτρινο σαν μπάλα τένις */
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 16px;
+  padding: 28px 46px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal .cancel-btn:hover {
+  background: #ff0000; /* πιο ανοιχτό κίτρινο */
+  transform: scale(1.05);
+  color: white;
+}
+
+.modal .cancel-btn:active {
+  background: #ff0000; /* έντονο κίτρινο για active */
+  transform: scale(0.97);
+}
+/* Τίτλος modal */
+.modal-content h2 {
+ font-size: 3em;
+}
+
+/* Κείμενο modal */
+.modal-content p {
+  font-size: 2.2rem;
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Πιο συγκεκριμένο, ώστε να υπερισχύσει του γενικού .modal-content */
+/* Ξεχωριστό style για winner modal */
+/* 📦 Winner Modal (Dark Theme) */
+.winner-modal-content {
+  background: black;
+  padding: 50px 60px;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 400px;
+  max-width: 600px;
+  
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Τίτλος */
+.winner-modal-content h2 {
+  margin-bottom: 25px;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #05ee10; /* έντονο πράσινο για να ξεχωρίζει */
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+}
+
+/* Κουμπιά επιλογής νικητή */
+.winner-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.winner-player-btn {
+  padding: 20px 45px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  border-radius: 12px;
+  border: 2px solid #32cd32;
+  cursor: pointer;
+  background: #006400; /* σκούρο πράσινο όπως τα player names */
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.winner-player-btn:hover {
+  background: #05ee10;
+  color: #121212;
+  transform: scale(1.05);
+}
+
+.winner-player-btn:active {
+  background: #32cd32;
+  color: #121212;
+  transform: scale(0.97);
+}
+
+.winner-player-btn.selected {
+  box-shadow: 0 0 15px #32cd32;
+}
+
+/* Κουμπιά Cancel / Save */
+.winner-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.winner-cancel-btn,
+.winner-save-btn {
+  padding: 15px 35px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid;
+  transition: all 0.2s ease;
+}
+
+.winner-cancel-btn {
+  background: #8b0000; /* σκούρο κόκκινο, consistent με fault buttons */
+  color: #ffffff;
+  border-color: #ff4d4d;
+}
+
+.winner-cancel-btn:hover {
+  background: #ff4d4d;
+  transform: scale(1.03);
+}
+
+.winner-cancel-btn:active {
+  background: #cc0000;
+  transform: scale(0.97);
+}
+
+.winner-save-btn {
+  background: #05ee10; /* έντονο πράσινο */
+  color: #121212;
+  border-color: #32cd32;
+}
+
+.winner-save-btn:hover {
+  background: #32cd32;
+  transform: scale(1.03);
+}
+
+.winner-save-btn:active {
+  background: #008000;
+  transform: scale(0.97);
+}
+
+
+</style>
+</head>
+<body>
+<a href="pregame.html" class="back-button">  ← Back</a>
+  <div id="tournamentInfo"></div>
+  <div id="courtImage"></div>
+  <div id="wimbledonScoreboard" class="scoreboard"></div>
+
+  <div id="actionButtonsContainer" class="dual-action-container">
+      <div class="player-column" id="player1-column">
+        <div class="player-name-wrapper">
+          <h3 id="player1-name">ΠΑΙΚΤΗΣ 1</h3>
+        </div>
+        <div class="button-container" id="player1-buttons"></div>
+      </div>
+
+      <div class="player-column" id="player2-column">
+        <div class="player-name-wrapper">
+          <h3 id="player2-name">ΠΑΙΚΤΗΣ 2</h3>
+        </div>
+        <div class="button-container" id="player2-buttons"></div>
+      </div>
+  </div>
+
+  <!-- 📌 Game History κάτω από τις player-columns -->
+  
+
+<div id="topButtonsContainer">
+  <button id="gameHistoryButton" class="stats-save-button">Game History</button>
+   <button id="statsButton" class="stats-save-button">Statistics</button>
+  <button id="saveMatchButton" class="stats-save-button">Save Match</button>
+ 
+  
+
+</div>
+
+
+<!-- HTML -->
+<div id="winnerModal" class="modal winner-modal" style="display:none;">
+  <div class="winner-modal-content">
+    <h2>Choose Winner</h2>
+    <div class="winner-buttons">
+      <button id="winnerPlayer1" class="winner-player-btn"></button>
+      <button id="winnerPlayer2" class="winner-player-btn"></button>
+    </div>
+    <div class="winner-actions">
+      <button id="cancelModal" class="winner-cancel-btn">Cancel</button>
+      <button id="confirmModal" class="winner-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal HTML -->
+<div id="backModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>Are you sure you want to leave?</h2>
+    <p>If you leave your data will be lost </p>
+    <button class="modal-player-btn cancel-btn" id="exitMatchBtn">Leave</button>
+    <button class="modal-player-btn save-btn" id="pauseMatchBtn">Cancel</button>
+    
+  </div>
+</div>
+
+<script>
+ 
+
+
+document.getElementById('statsButton').addEventListener('click', () => {
+    window.location.href = 'stats.html';
+});
+document.getElementById('gameHistoryButton').addEventListener('click', () => {
+    window.location.href = 'gamehistory.html';
+});
+
+function updateCourtImage(type) {
+    const court = document.getElementById('courtImage');
+    if (type === 'blue') {
+      court.style.backgroundImage = 'url("hard.jpg")';
+    } else if (type === 'clay') {
+      court.style.backgroundImage = 'url("clay.jpg")';
+    } else {
+      court.style.backgroundImage = 'url("grass.jpg")';
+    }
+}
+
+let servePosition = localStorage.getItem('servePosition') || 'top';
+let statsPlayer1 = JSON.parse(localStorage.getItem('statsPlayer1')) || {};
+let statsPlayer2 = JSON.parse(localStorage.getItem('statsPlayer2')) || {};
+
+
+
+
+
+function initializeMatch(matchData) {
+    if (!matchData.scores) matchData.scores = { player1: [0], player2: [0] };
+    if (matchData.currentSet == null) matchData.currentSet = 0;
+    if (!matchData.currentGameScore) matchData.currentGameScore = { player1: '0', player2: '0' };
+    if (!matchData.gameHistory) matchData.gameHistory = [[]];
+    if (!matchData.inTiebreak) matchData.inTiebreak = false;
+}
+
+function resetCurrentGameScore(matchData) {
+    matchData.currentGameScore = { player1: '0', player2: '0' };
+}
+
+function finishTiebreak(matchData, winner) {
+    const setIndex = matchData.currentSet;
+
+    if (winner === 'player1') {
+        matchData.scores.player1[setIndex] = 7;
+        matchData.scores.player2[setIndex] = 6;
+    } else {
+        matchData.scores.player1[setIndex] = 6;
+        matchData.scores.player2[setIndex] = 7;
+    }
+
+    matchData.currentSet++;
+    matchData.inTiebreak = false;
+    matchData.tiebreakScore = { player1: 0, player2: 0 };
+    matchData.scores.player1[matchData.currentSet] = 0;
+    matchData.scores.player2[matchData.currentSet] = 0;
+
+    resetCurrentGameScore(matchData);
+
+    // Νέο game history για το επόμενο σετ
+    matchData.gameHistory[matchData.currentSet] = [];
+}
+
+
+function winGame(playerKey, matchData) {
+    initializeMatch(matchData);
+    const setIndex = matchData.currentSet;
+
+    if (!matchData.inTiebreak) {
+        matchData.scores[playerKey][setIndex]++;
+        const pGames = matchData.scores.player1[setIndex];
+        const oGames = matchData.scores.player2[setIndex];
+
+        if (pGames === 6 && oGames === 6) {
+            matchData.inTiebreak = true;
+            matchData.tiebreakScore = { player1: 0, player2: 0 };
+            resetCurrentGameScore(matchData);
+        } else if ((pGames >= 6 || oGames >= 6) && Math.abs(pGames - oGames) >= 2) {
+            matchData.currentSet++;
+            matchData.inTiebreak = false;
+            matchData.tiebreakScore = { player1: 0, player2: 0 };
+            matchData.scores.player1[matchData.currentSet] = 0;
+            matchData.scores.player2[matchData.currentSet] = 0;
+            resetCurrentGameScore(matchData);
+
+            // νέο σετ → φτιάχνουμε νέο array gameHistory
+            matchData.gameHistory[matchData.currentSet] = [];
+        }
+    } else {
+        const tP = matchData.tiebreakScore.player1;
+        const tO = matchData.tiebreakScore.player2;
+        if ((tP >= 7 && tP - tO >= 2) || (tO >= 7 && tO - tP >= 2)) {
+            finishTiebreak(matchData, playerKey);
+        }
+    }
+
+    resetCurrentGameScore(matchData);
+
+    // 🔑 Κάθε φορά που τελειώνει ένα game → ξεκινάμε νέο
+    if (matchData.currentSet === setIndex) {
+        matchData.gameHistory[setIndex].push([]);
+    }
+
+    servePosition = servePosition === 'top' ? 'bottom' : 'top';
+    localStorage.setItem('servePosition', servePosition);
+
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+    renderScoreboard(matchData);
+    
+}
+
+
+
+
+function addPointTo(playerKey, matchData) {
+    initializeMatch(matchData);
+    const otherPlayer = playerKey === 'player1' ? 'player2' : 'player1';
+    const setIndex = matchData.currentSet;
+
+    if (!matchData.gameHistory[setIndex]) matchData.gameHistory[setIndex] = [];
+
+    // Δημιουργούμε νέο array μόνο αν δεν υπάρχει κανένα game στο σετ
+    if (matchData.gameHistory[setIndex].length === 0) {
+        matchData.gameHistory[setIndex].push([]);
+    }
+
+    const currentGameHistory = matchData.gameHistory[setIndex][matchData.gameHistory[setIndex].length - 1];
+
+    if (matchData.inTiebreak) {
+        matchData.currentGameScore[playerKey] = String(Number(matchData.currentGameScore[playerKey] || 0) + 1);
+        const pPoints = Number(matchData.currentGameScore.player1);
+        const oPoints = Number(matchData.currentGameScore.player2);
+
+        currentGameHistory.push(`${pPoints}-${oPoints}`);
+
+        if ((pPoints >= 7 && pPoints - oPoints >= 2) || (oPoints >= 7 && oPoints - pPoints >= 2)) {
+            finishTiebreak(matchData, playerKey);
+            // Μετά το finishTiebreak, το reset θα δημιουργήσει νέο array στο επόμενο addPointTo
+        }
+    } else {
+        const scoreMap = ['0','15','30','40'];
+        let pScore = matchData.currentGameScore[playerKey];
+        let oScore = matchData.currentGameScore[otherPlayer];
+
+        if (pScore === 'Ad') {
+            winGame(playerKey, matchData);
+            // Δημιουργούμε νέο array για το επόμενο game
+            matchData.gameHistory[setIndex].push([]);
+        } else if (oScore === 'Ad') {
+            matchData.currentGameScore[playerKey] = '40';
+            matchData.currentGameScore[otherPlayer] = '40';
+            currentGameHistory.push(`${matchData.currentGameScore.player1}-${matchData.currentGameScore.player2}`);
+        } else if (pScore === '40' && oScore === '40') {
+            matchData.currentGameScore[playerKey] = 'Ad';
+            currentGameHistory.push(`${matchData.currentGameScore.player1}-${matchData.currentGameScore.player2}`);
+        } else {
+            let idx = scoreMap.indexOf(pScore);
+            if (idx < scoreMap.length - 1) {
+                matchData.currentGameScore[playerKey] = scoreMap[idx + 1];
+                currentGameHistory.push(`${matchData.currentGameScore.player1}-${matchData.currentGameScore.player2}`);
+            } else {
+                winGame(playerKey, matchData);
+                if (matchData.currentSet === setIndex) {
+                matchData.gameHistory[setIndex].push([]);
+         }
+            }
+        }
+    }
+
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+    renderScoreboard(matchData);
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+  function renderScoreboard(matchData) {
+    const container = document.getElementById('wimbledonScoreboard');
+    container.innerHTML = '';
+
+    const sets = 3; // πάντα 3 σετ για εμφάνιση
+
+    // --- Συνάρτηση για αφαίρεση τόνων ---
+    function removeGreekTones(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    // --- Συνάρτηση για επίθετο σε κεφαλαία χωρίς τόνους ---
+    function getLastNameUpperNoTones(fullName) {
+        const parts = fullName.trim().split(' ');
+        const lastName = parts[parts.length - 1]; // τελευταίο μέρος ως επίθετο
+        return removeGreekTones(lastName).toUpperCase();
+    }
+
+    const player1 = getLastNameUpperNoTones(matchData.player1);
+    const player2 = getLastNameUpperNoTones(matchData.player2);
+
+    document.getElementById('player1-name').textContent = player1;
+    document.getElementById('player2-name').textContent = player2;
+
+    // Αν δεν υπάρχουν scores, γεμίζουμε με 0 και πάντα 3 σετ
+    const scores1 = matchData.scores?.player1 || [];
+    const scores2 = matchData.scores?.player2 || [];
+    while (scores1.length < sets) scores1.push(0);
+    while (scores2.length < sets) scores2.push(0);
+
+    const currentGameScore = matchData.currentGameScore || { player1: '0', player2: '0' };
+    const serveState = JSON.parse(localStorage.getItem('serveState')) || { player1: { pendingFault: false }, player2: { pendingFault: false } };
+
+    const createPlayerRow = (name, scores, gameScore, isServing, playerKey) => {
+        const row = document.createElement('div');
+        row.className = 'scoreboard-row';
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'player-name';
+        nameDiv.textContent = name;
+        row.appendChild(nameDiv);
+
+        const setsContainer = document.createElement('div');
+        setsContainer.className = 'sets-container';
+        scores.forEach(score => {
+            const scoreBox = document.createElement('div');
+            scoreBox.className = 'set-score';
+            scoreBox.textContent = score;
+            setsContainer.appendChild(scoreBox);
+        });
+        row.appendChild(setsContainer);
+
+        const gameScoreContainer = document.createElement('div');
+        gameScoreContainer.className = 'game-score-container';
+
+        const gameScoreDiv = document.createElement('div');
+        gameScoreDiv.className = 'game-score';
+        gameScoreDiv.textContent = gameScore;
+        gameScoreContainer.appendChild(gameScoreDiv);
+
+        if (isServing) {
+            const serveButton1 = document.createElement('button');
+            serveButton1.id = `serveButton1-${playerKey}`;
+            serveButton1.className = 'serve-ball';
+            serveButton1.textContent = '🎾';
+            serveButton1.title = 'Αλλαγή σερβίς';
+            serveButton1.onclick = () => {
+                servePosition = servePosition === 'top' ? 'bottom' : 'top';
+                renderScoreboard(matchData);
+                renderActionButtons();
+            };
+
+            const serveButton2 = document.createElement('button');
+            serveButton2.id = `serveButton2-${playerKey}`;
+            serveButton2.className = 'serve-ball extra';
+            serveButton2.textContent = '🎾';
+            serveButton2.title = 'Δεύτερο μπαλάκι';
+            serveButton2.style.display = 'inline';
+
+            if (serveState[playerKey] && serveState[playerKey].pendingFault) {
+                serveButton2.style.display = 'none';
+            }
+
+            gameScoreContainer.appendChild(serveButton1);
+            gameScoreContainer.appendChild(serveButton2);
+        }
+
+        row.appendChild(gameScoreContainer);
+        return row;
+    };
+
+    const row1 = createPlayerRow(player1, scores1, currentGameScore.player1, servePosition === 'top', 'player1');
+    const row2 = createPlayerRow(player2, scores2, currentGameScore.player2, servePosition === 'bottom', 'player2');
+
+    container.appendChild(row1);
+    container.appendChild(row2);
+
+    renderActionButtons();
+    
+}
+
+
+ function renderActionButtons() {
+    const player1Btns = document.getElementById('player1-buttons');
+    const player2Btns = document.getElementById('player2-buttons');
+
+    // Παίρνουμε το matchData
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || { player1: '', player2: '' };
+
+    // Συνάρτηση για αφαίρεση τόνων
+    function removeGreekTones(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    // Συνάρτηση για επίθετο σε κεφαλαία χωρίς τόνους
+    function getLastNameUpperNoTones(fullName) {
+        const parts = fullName.trim().split(' ');
+        const lastName = parts[parts.length - 1] || fullName;
+        return removeGreekTones(lastName).toUpperCase();
+    }
+
+    const p1Name = getLastNameUpperNoTones(matchData.player1 || 'ΠΑΙΚΤΗΣ 1');
+    const p2Name = getLastNameUpperNoTones(matchData.player2 || 'ΠΑΙΚΤΗΣ 2');
+
+    // Ενημέρωση ονομάτων στα player columns
+    document.getElementById('player1-name').textContent = p1Name;
+    document.getElementById('player2-name').textContent = p2Name;
+
+    // Καθαρισμός προηγούμενων κουμπιών
+    player1Btns.innerHTML = '';
+    player2Btns.innerHTML = '';
+
+    const serveActions = ['Ace', 'Ball In', 'Fault'];
+    const returnActions = ['Return Winner', 'Return Error'];
+    const extraActions = ['Winner', 'Unforced Error', 'Forced Error'];
+
+    // Βάζουμε/διαβάζουμε global serveState (στο localStorage για persistence)
+    const defaultServeState = { player1: { pendingFault: false }, player2: { pendingFault: false } };
+    const serveState = JSON.parse(localStorage.getItem('serveState')) || defaultServeState;
+
+    const createButton = (action, playerLabel, container, group) => {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.textContent = action;
+      btn.dataset.group = group;
+      btn.dataset.action = action;
+
+      // προσδιοριζουμε playerKey από container id
+      const playerKey = container.id === 'player1-buttons' ? 'player1' : 'player2';
+      btn.dataset.playerKey = playerKey;
+
+      // αρχική εμφάνιση: αν υπάρχει pending fault για αυτόν
+      if (action === 'Fault' && serveState[playerKey] && serveState[playerKey].pendingFault) {
+        btn.style.backgroundColor = 'red';
+        btn.textContent = 'Double Fault';
+        btn.classList.add('fault-active');
+      }
+if (action === 'Ace') {
+  btn.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    const playerKey = btn.dataset.playerKey;
+    const statsKey = playerKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+    let stats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+    // Αύξηση Άσσων
+    stats['Άσοι'] = (stats['Άσοι'] || 0) + 1;
+
+    // Αύξηση Νικητών
+    stats['Νικητές'] = (stats['Νικητές'] || 0) + 1;
+
+    // Αύξηση Κερδισμένων Πόντων
+    stats['Κερδισμένοι Πόντοι'] = (stats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+    // Αύξηση Πόντων με Σερβίς
+    stats['Πόντοι με σερβίς'] = (stats['Πόντοι με σερβίς'] || 0) + 1;
+
+    // Έλεγχος πρώτου σερβίς
+    const serveState = JSON.parse(localStorage.getItem('serveState')) || {};
+    if (!serveState[playerKey]) serveState[playerKey] = { pendingFault: false };
+
+    if (!serveState[playerKey].pendingFault) {
+      stats.firstServeNumerator = (stats.firstServeNumerator || 0) + 1;
+      stats.firstServeDenominator = (stats.firstServeDenominator || 0) + 1;
+    } else {
+      serveState[playerKey].pendingFault = false;
+      localStorage.setItem('serveState', JSON.stringify(serveState));
+    }
+
+    // Υπολογισμός ποσοστού 1ου σερβίς
+    const num = stats.firstServeNumerator || 0;
+    const denom = stats.firstServeDenominator || 0;
+    const percent = denom > 0 ? Math.round((num / denom) * 100) : 0;
+    stats['Ποσοστό 1ου σερβίς'] = `${num}/${denom} (${percent}%)`;
+
+    localStorage.setItem(statsKey, JSON.stringify(stats));
+
+    // Προσθήκη πόντου
+    addPointTo(playerKey, matchData);
+
+    // Ενημέρωση UI
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+
+    if (action === 'Fault') {
+  btn.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    const playerKey = btn.dataset.playerKey;
+    const statsKey = playerKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+    let stats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+    // Αρχικοποίηση
+    stats.firstServeNumerator = stats.firstServeNumerator || 0;
+    stats.firstServeDenominator = stats.firstServeDenominator || 0;
+    stats['Νταμπλ φολτ'] = stats['Νταμπλ φολτ'] || 0;
+
+    const serveState = JSON.parse(localStorage.getItem('serveState')) || {};
+    if (!serveState[playerKey]) serveState[playerKey] = { pendingFault: false };
+
+    if (!serveState[playerKey].pendingFault) {
+      // Πρώτο fault → μόνο ενημέρωση πρώτου σερβίς
+      serveState[playerKey].pendingFault = true;
+      stats.firstServeDenominator += 1;
+
+      const num = stats.firstServeNumerator;
+      const denom = stats.firstServeDenominator;
+      const percent = denom > 0 ? Math.round((num / denom) * 100) : 0;
+      stats['Ποσοστό 1ου σερβίς'] = `${num}/${denom} (${percent}%)`;
+
+      localStorage.setItem(statsKey, JSON.stringify(stats));
+      localStorage.setItem('serveState', JSON.stringify(serveState));
+
+      renderScoreboard(matchData);
+      renderActionButtons();
+
+    } else {
+      // Δεύτερο fault → Double Fault
+      stats['Νταμπλ φολτ'] += 1;
+      stats['Ατομικά λάθη'] = (stats['Ατομικά λάθη'] || 0) + 1;
+
+      const opponentKey = playerKey === 'player1' ? 'player2' : 'player1';
+      const opponentStatsKey = opponentKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+      let opponentStats = JSON.parse(localStorage.getItem(opponentStatsKey)) || {};
+
+      // Αυξάνουμε Πόντους χωρίς σερβίς και Κερδισμένους πόντους για τον αντίπαλο
+      opponentStats['Πόντοι χωρίς σερβίς'] = (opponentStats['Πόντοι χωρίς σερβίς'] || 0) + 1;
+      opponentStats['Κερδισμένοι Πόντοι'] = (opponentStats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+      localStorage.setItem(statsKey, JSON.stringify(stats));
+      localStorage.setItem(opponentStatsKey, JSON.stringify(opponentStats));
+
+      addPointTo(opponentKey, matchData);
+
+      serveState[playerKey].pendingFault = false;
+      localStorage.setItem('serveState', JSON.stringify(serveState));
+
+      renderScoreboard(matchData);
+      renderActionButtons();
+    }
+  });
+
+  container.appendChild(btn);
+  return;
+}
+
+
+
+if (action === 'Ball In') {
+  btn.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    const statsKey = playerKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+    let stats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+    stats.firstServeNumerator = stats.firstServeNumerator || 0;
+    stats.firstServeDenominator = stats.firstServeDenominator || 0;
+
+    const curServeState = JSON.parse(localStorage.getItem('serveState')) || defaultServeState;
+
+    if (curServeState[playerKey] && curServeState[playerKey].pendingFault) {
+      curServeState[playerKey].pendingFault = false;
+      localStorage.setItem('serveState', JSON.stringify(curServeState));
+
+      // Επαναφορά κουμπιού Fault
+      const faultBtn = container.querySelector('[data-action="Fault"]');
+      if (faultBtn) {
+        faultBtn.style.backgroundColor = '#006400';
+        faultBtn.textContent = 'Fault';
+        faultBtn.classList.remove('fault-active');
+      }
+
+      // Επαναφορά δεύτερου μπαλακιού
+      const sb2 = document.getElementById(`serveButton2-${playerKey}`);
+      if (sb2) sb2.style.display = 'inline';
+
+    } else {
+      stats.firstServeNumerator += 1;
+      stats.firstServeDenominator += 1;
+
+      const num = stats.firstServeNumerator;
+      const denom = stats.firstServeDenominator;
+      const percent = denom > 0 ? Math.round((num / denom) * 100) : 0;
+      stats['Ποσοστό 1ου σερβίς'] = `(${num}/${denom}) ${percent}%`;
+
+      localStorage.setItem(statsKey, JSON.stringify(stats));
+    }
+
+    toggleActionGroups(false, 'main');
+    toggleActionGroups(true, 'extra');
+  });
+
+  container.appendChild(btn);
+  return;
+}
+
+
+if (action === 'Return Error' || action === 'Return Winner') {
+  btn.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    const playerKey = btn.dataset.playerKey; // ο παίκτης που πατάει το κουμπί
+    const opponentKey = playerKey === 'player1' ? 'player2' : 'player1';
+
+    // stats του παίκτη που πατάει το κουμπί
+    const statsKey = playerKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+    let stats = JSON.parse(localStorage.getItem(statsKey)) || {};
+
+    // stats του αντίπαλου
+    const opponentStatsKey = opponentKey === 'player1' ? 'statsPlayer1' : 'statsPlayer2';
+    let opponentStats = JSON.parse(localStorage.getItem(opponentStatsKey)) || {};
+
+    // serve state
+    const serveState = JSON.parse(localStorage.getItem('serveState')) || {};
+    if (!serveState[opponentKey]) serveState[opponentKey] = { pendingFault: false };
+
+    // Αν είναι πρώτο σερβίς (πράσινο Fault)
+    if (!serveState[opponentKey].pendingFault) {
+      opponentStats.firstServeDenominator = (opponentStats.firstServeDenominator || 0) + 1;
+      opponentStats.firstServeNumerator = (opponentStats.firstServeNumerator || 0) + 1;
+
+      const num = opponentStats.firstServeNumerator;
+      const denom = opponentStats.firstServeDenominator;
+      const percent = denom > 0 ? Math.round((num / denom) * 100) : 0;
+      opponentStats['Ποσοστό 1ου σερβίς'] = `${num}/${denom} (${percent}%)`;
+
+      localStorage.setItem(opponentStatsKey, JSON.stringify(opponentStats));
+    }
+
+    if (action === 'Return Winner') {
+      // αυξάνει stats του παίκτη
+      stats['Return Winners'] = (stats['Return Winners'] || 0) + 1;
+      stats['Νικητές'] = (stats['Νικητές'] || 0) + 1;
+      stats['Πόντοι χωρίς σερβίς'] = (stats['Πόντοι χωρίς σερβίς'] || 0) + 1;
+      stats['Κερδισμένοι Πόντοι'] = (stats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+      addPointTo(playerKey, matchData);
+    } else if (action === 'Return Error') {
+      // αυξάνει stats του αντίπαλου
+      stats['Return Errors'] = (stats['Return Errors'] || 0) + 1;
+      stats['Ατομικά λάθη'] = (stats['Ατομικά λάθη'] || 0) + 1;
+      opponentStats['Πόντοι με σερβίς'] = (opponentStats['Πόντοι με σερβίς'] || 0) + 1;
+      opponentStats['Κερδισμένοι Πόντοι'] = (opponentStats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+      addPointTo(opponentKey, matchData);
+    }
+
+    localStorage.setItem(statsKey, JSON.stringify(stats));
+    localStorage.setItem(opponentStatsKey, JSON.stringify(opponentStats));
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+    localStorage.setItem('serveState', JSON.stringify(serveState));
+
+    resetFaultButtons();
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+
+
+ // default click behaviour για υπόλοιπα
+      btn.addEventListener('click', () => {
+        if (action === 'Ball In') {
+          toggleActionGroups(false, 'main');
+          toggleActionGroups(true, 'extra');
+          
+        }
+
+        if (group === 'extra') {
+          toggleActionGroups(true, 'main');
+          toggleActionGroups(false, 'extra');
+        }
+      });
+     
+
+      container.appendChild(btn);
+    };
+
+    function toggleActionGroups(show, group) {
+      const buttons = document.querySelectorAll(`[data-group]`);
+      buttons.forEach(btn => {
+        if (btn.dataset.group === group) {
+          btn.style.display = show ? 'flex' : 'none';
+        }
+      });
+    }
+
+    // Δημιουργία βασικών κουμπιών ανάλογα με τη θέση σερβίς
+    if (servePosition === 'top') {
+      serveActions.forEach(action => createButton(action, p1Name, player1Btns, 'main'));
+      returnActions.forEach(action => createButton(action, p2Name, player2Btns, 'main'));
+    } else {
+      serveActions.forEach(action => createButton(action, p2Name, player2Btns, 'main'));
+      returnActions.forEach(action => createButton(action, p1Name, player1Btns, 'main'));
+    }
+
+    // extra actions (σώζονται και για τους δύο παίκτες)
+   // extra actions (Winner, Unforced Error, Forced Error)
+extraActions.forEach(action => {
+  // --- Κουμπί για Player1 ---
+  const btn1 = document.createElement('button');
+  btn1.className = 'action-btn';
+  btn1.textContent = action;
+  btn1.dataset.group = 'extra';
+  btn1.dataset.action = action;
+  btn1.dataset.playerKey = 'player1';
+  btn1.style.display = 'none';
+
+ if (action === 'Winner') {
+  btn1.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    let stats = JSON.parse(localStorage.getItem('statsPlayer1')) || {};
+
+    // Αύξηση νικητών και κερδισμένων πόντων πάντα
+    stats['Νικητές'] = (stats['Νικητές'] || 0) + 1;
+    stats['Κερδισμένοι Πόντοι'] = (stats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+    // Αν σερβίρει ο player2, αυξάνονται μόνο οι πόντοι (χωρίς σερβίς)
+    if (servePosition=='bottom') {
+       stats['Πόντοι χωρίς σερβίς'] = (stats['Πόντοι χωρίς σερβίς'] || 0) + 1;
+    }
+ if (servePosition=='top')  {
+       stats['Πόντοι με σερβίς'] = (stats['Πόντοι με σερβίς'] || 0) + 1;
+    }
+    localStorage.setItem('statsPlayer1', JSON.stringify(stats));
+
+    // Προσθήκη πόντου στον παίκτη1 στο matchData
+    addPointTo('player1', matchData);
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+
+
+  if (action === 'Unforced Error' || action === 'Forced Error') {
+  btn1.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    let stats1 = JSON.parse(localStorage.getItem('statsPlayer1')) || {};
+    let stats2 = JSON.parse(localStorage.getItem('statsPlayer2')) || {};
+
+    // Αύξηση λαθών για Player1
+    if (action === 'Unforced Error') {
+      stats1['Ατομικά λάθη'] = (stats1['Ατομικά λάθη'] || 0) + 1;
+    } else if (action === 'Forced Error') {
+      stats1['Λάθη υπό πίεση'] = (stats1['Λάθη υπό πίεση'] || 0) + 1;
+    }
+
+    // Προσθήκη πόντου στον αντίπαλο
+   
+
+    // Αύξηση "Κερδισμένων Πόντων" για Player2
+    stats2['Κερδισμένοι Πόντοι'] = (stats2['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+    // Αύξηση πόντων με/χωρίς σερβίς ανάλογα με το ποιος σερβίρει
+    if (servePosition === 'bottom') {
+      stats2['Πόντοι με σερβίς'] = (stats2['Πόντοι με σερβίς'] || 0) + 1;
+    } else if (servePosition === 'top') {
+      stats2['Πόντοι χωρίς σερβίς'] = (stats2['Πόντοι χωρίς σερβίς'] || 0) + 1;
+    }
+addPointTo('player2', matchData)
+    // Αποθήκευση
+    localStorage.setItem('statsPlayer1', JSON.stringify(stats1));
+    localStorage.setItem('statsPlayer2', JSON.stringify(stats2));
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+
+
+  player1Btns.appendChild(btn1);
+
+  // --- Κουμπί για Player2 ---
+  const btn2 = document.createElement('button');
+  btn2.className = 'action-btn';
+  btn2.textContent = action;
+  btn2.dataset.group = 'extra';
+  btn2.dataset.action = action;
+  btn2.dataset.playerKey = 'player2';
+  btn2.style.display = 'none';
+
+  
+if (action === 'Winner') {
+  btn2.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    let stats = JSON.parse(localStorage.getItem('statsPlayer2')) || {};
+
+    // Αύξηση νικητών και κερδισμένων πόντων πάντα
+    stats['Νικητές'] = (stats['Νικητές'] || 0) + 1;
+    stats['Κερδισμένοι Πόντοι'] = (stats['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+    // Αν σερβίρει ο player1, αυξάνονται μόνο οι πόντοι χωρίς σερβίς
+   if (servePosition=='top')  {
+       stats['Πόντοι χωρίς σερβίς'] = (stats['Πόντοι χωρίς σερβίς'] || 0) + 1;
+    }
+ if (servePosition=='bottom')  {
+       stats['Πόντοι με σερβίς'] = (stats['Πόντοι με σερβίς'] || 0) + 1;
+    }
+    localStorage.setItem('statsPlayer2', JSON.stringify(stats));
+
+    // Προσθήκη πόντου στον player2 στο matchData
+    addPointTo('player2', matchData);
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+if (action === 'Unforced Error' || action === 'Forced Error') {
+  btn2.addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    let stats2 = JSON.parse(localStorage.getItem('statsPlayer2')) || {};
+    let stats1 = JSON.parse(localStorage.getItem('statsPlayer1')) || {};
+
+    // Αύξηση λαθών για Player2
+    if (action === 'Unforced Error') {
+      stats2['Ατομικά λάθη'] = (stats2['Ατομικά λάθη'] || 0) + 1;
+    } else if (action === 'Forced Error') {
+      stats2['Λάθη υπό πίεση'] = (stats2['Λάθη υπό πίεση'] || 0) + 1;
+    }
+
+    // Προσθήκη πόντου στον αντίπαλο
+    
+
+    // Αύξηση "Κερδισμένων Πόντων" για Player1
+    stats1['Κερδισμένοι Πόντοι'] = (stats1['Κερδισμένοι Πόντοι'] || 0) + 1;
+
+    // Αύξηση πόντων με/χωρίς σερβίς ανάλογα με το ποιος σερβίρει
+    if (servePosition === 'top') {
+      stats1['Πόντοι με σερβίς'] = (stats1['Πόντοι με σερβίς'] || 0) + 1;
+    } else if (servePosition === 'bottom') {
+      stats1['Πόντοι χωρίς σερβίς'] = (stats1['Πόντοι χωρίς σερβίς'] || 0) + 1;
+    }
+addPointTo('player1', matchData);
+    // Αποθήκευση
+    localStorage.setItem('statsPlayer2', JSON.stringify(stats2));
+    localStorage.setItem('statsPlayer1', JSON.stringify(stats1));
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+    renderScoreboard(matchData);
+    renderActionButtons();
+  });
+}
+
+
+
+
+  player2Btns.appendChild(btn2);
+});
+
+  }
+
+  function toggleSecondBall(show = true) {
+    const ball1 = document.getElementById('serveButton2-player1');
+    const ball2 = document.getElementById('serveButton2-player2');
+    if (ball1) ball1.style.display = show ? 'inline' : 'none';
+    if (ball2) ball2.style.display = show ? 'inline' : 'none';
+  }
+
+  window.onload = () => {
+
+
+
+
+
+
+    const matchData = JSON.parse(localStorage.getItem('currentMatch'));
+    if (!matchData) {
+      document.body.innerHTML = '<p style="color: red;">Δεν υπάρχουν δεδομένα αγώνα.</p>';
+      return;
+    }
+  servePosition = localStorage.getItem('servePosition') || 'top';
+    document.getElementById('tournamentInfo').innerHTML = `
+     
+      <p style="color: #fff; font-size: 1.5rem; font-weight: 500; text-shadow: 0 1px 2px #000; margin-top:100px">
+        📍 ${matchData.location} | 🗓 ${matchData.date} | 🕒 ${matchData.time}
+      </p>
+    `;
+
+    updateCourtImage(matchData.rules.courtType);
+    renderScoreboard(matchData);
+  };
+  function updateStat(playerKey, category, isWon = true) {
+  let stats = JSON.parse(localStorage.getItem(playerKey)) || createEmptyStats();
+  stats = normalizeStats(stats);
+
+  // Αν είναι μετρητής "won/total"
+  if (stats[category] && typeof stats[category] === "object") {
+    if (isWon) stats[category].won++;
+    stats[category].total++;
+  } else {
+    // Απλή αριθμητική κατηγορία (π.χ. Άσοι)
+    stats[category] = (Number(stats[category]) || 0) + 1;
+  }
+
+  localStorage.setItem(playerKey, JSON.stringify(stats));
+  loadStats(); // ανανέωση του πίνακα
+}
+
+function toggleServer() {
+  const serveState = JSON.parse(localStorage.getItem('serveState')) || {};
+  const current = serveState.currentServer || 'player1';
+  const newServer = current === 'player1' ? 'player2' : 'player1';
+  serveState.currentServer = newServer;
+  serveState.servePosition = newServer === 'player1' ? 'top' : 'bottom';
+  
+  renderScoreboard(JSON.parse(localStorage.getItem('currentMatch')));
+  localStorage.setItem('servePosition', servePosition);  // <--- προσθήκη
+}
+document.getElementById('saveMatchButton').addEventListener('click', () => {
+    const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+    const statsPlayer1 = JSON.parse(localStorage.getItem('statsPlayer1')) || {};
+    const statsPlayer2 = JSON.parse(localStorage.getItem('statsPlayer2')) || {};
+
+    if (!matchData.player1 || !matchData.player2) {
+        alert('Δεν έχει οριστεί πλήρως ο αγώνας.');
+        return;
+    }
+
+    const modal = document.getElementById('winnerModal');
+    modal.style.display = 'flex';
+    const player1Btn = document.getElementById('winnerPlayer1');
+    const player2Btn = document.getElementById('winnerPlayer2');
+    player1Btn.textContent = matchData.player1;
+    player2Btn.textContent = matchData.player2;
+
+    // Αρχικοποίηση επιλογής
+    let selectedWinner = null;
+
+    // Επιλογή νικητή
+    [player1Btn, player2Btn].forEach(btn => {
+        btn.classList.remove('selected');
+        btn.onclick = () => {
+            selectedWinner = btn.textContent;
+            player1Btn.classList.toggle('selected', selectedWinner === player1Btn.textContent);
+            player2Btn.classList.toggle('selected', selectedWinner === player2Btn.textContent);
+        };
+    });
+
+    // Κουμπί Ακύρωσης
+    document.getElementById('cancelModal').onclick = () => {
+        selectedWinner = null;
+        modal.style.display = 'none';
+    };
+
+    // Κουμπί Αποθήκευσης
+  document.getElementById('confirmModal').onclick = () => {
+    if (!selectedWinner) return alert('Choose Winner First!');
+
+    const loser = (selectedWinner === matchData.player1) ? matchData.player2 : matchData.player1;
+    const savedMatch = {
+        timestamp: new Date().toISOString(),
+        players: { player1: matchData.player1, player2: matchData.player2 },
+        winner: selectedWinner,
+        loser: loser,
+        date: matchData.date || null,
+        location: matchData.location || null,
+        scores: matchData.scores,
+        gameHistory: matchData.gameHistory,
+        stats: { player1: statsPlayer1, player2: statsPlayer2 }
+    };
+
+    const request = indexedDB.open("TennisMatchesDB", 1);
+    request.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains("matches")) {
+            db.createObjectStore("matches", { keyPath: "id", autoIncrement: true });
+        }
+    };
+    request.onsuccess = e => {
+        const db = e.target.result;
+        const tx = db.transaction("matches", "readwrite");
+        tx.objectStore("matches").add(savedMatch);
+        tx.oncomplete = () => {
+            localStorage.removeItem('currentMatch');
+            localStorage.removeItem('statsPlayer1');
+            localStorage.removeItem('statsPlayer2');
+            modal.style.display = 'none';
+            // Ανακατεύθυνση στη index.html
+            window.location.href = 'index.html';
+        };
+        tx.onerror = () => alert('Σφάλμα κατά την αποθήκευση του αγώνα.');
+    };
+    request.onerror = e => console.error("IndexedDB error:", e.target.errorCode);
+};
+
+});
+
+
+
+ const backButton = document.querySelector('.back-button');
+const modal = document.getElementById('backModal');
+const pauseBtn = document.getElementById('pauseMatchBtn');
+const exitBtn = document.getElementById('exitMatchBtn');
+
+// Όταν πατιέται το Back
+backButton.addEventListener('click', function(e){
+  e.preventDefault(); // Αποτρέπει άμεση αλλαγή σελίδας
+  modal.style.display = 'flex';
+});
+
+// Cancel → συνεχίζει τον αγώνα
+pauseBtn.addEventListener('click', function(){
+  modal.style.display = 'none';
+  // Τα δεδομένα παραμένουν στο localStorage
+  // Ο αγώνας συνεχίζεται στη σελίδα που είναι
+});
+
+// Exit → διαγράφει τα δεδομένα και επιστρέφει στην αρχική
+exitBtn.addEventListener('click', function(){
+  localStorage.removeItem('currentMatch');
+  localStorage.removeItem('statsPlayer1');
+  localStorage.removeItem('statsPlayer2');
+  modal.style.display = 'none';
+  window.location.href = "index.html";
+});
+
+// Κλείσιμο modal αν κάνεις κλικ έξω από το content
+window.addEventListener('click', function(e){
+  if(e.target == modal){
+    modal.style.display = 'none';
+  }
+});
+
+
+
+function resetFaultButtons() { //επαναφορα κουμπιου fault
+  const serveState = JSON.parse(localStorage.getItem('serveState')) || {};
+  serveState.player1.pendingFault = false;
+  serveState.player2.pendingFault = false;
+  localStorage.setItem('serveState', JSON.stringify(serveState));
+
+  ['player1', 'player2'].forEach(playerKey => {
+    const btn = document.querySelector(`#${playerKey}-buttons button[data-action="Fault"]`);
+    if (btn) {
+      btn.style.backgroundColor = 'green'; // αρχικό πράσινο
+      btn.textContent = 'Fault';
+      btn.classList.remove('fault-active');
+    }
+  });
+
+  // Ανανεώνουμε UI
+  const matchData = JSON.parse(localStorage.getItem('currentMatch')) || {};
+  renderScoreboard(matchData);
+  renderActionButtons();
+}
+
+</script>
+
+</body>
+</html>
+

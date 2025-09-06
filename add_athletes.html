@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Match Tracking</title>
+<style>
+/* --- Body & General --- */
+body {
+   background-image: url('clays.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: #000000; /* μαύρο/σκούρο για αντίθεση */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+/* --- Titles --- */
+ h2 {
+  color: #ffffff; /* λευκό κείμενο */
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+  
+}
+h1{
+    color: #ffffff; /* λευκό κείμενο */
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 150px;
+  font-size: 3em;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+}
+/* --- Form & Inputs --- */
+/* --- Inputs --- */
+#athleteForm input[type="text"],
+#athleteForm input[type="number"],
+#athleteForm input[type="file"],
+#athleteForm select {
+  width: 100%;
+  padding: 25px 30px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.8rem;
+  background-color: #fff;
+  color: #000;
+  box-sizing: border-box;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease; /* για smooth effects */
+}
+
+/* --- Hover & Focus --- */
+#athleteForm input[type="text"]:hover,
+#athleteForm input[type="number"]:hover,
+#athleteForm select:hover,
+#athleteForm input[type="file"]:hover {
+  box-shadow: 0 4px 12px rgba(160,82,45,0.4);
+  transform: translateY(-2px);
+}
+
+#athleteForm input[type="text"]:focus,
+#athleteForm input[type="number"]:focus,
+#athleteForm select:focus,
+#athleteForm input[type="file"]:focus {
+  outline: none;
+  box-shadow: 0 0 8px 3px rgba(210,180,140,0.7);
+  background-color: #fffbe6; /* λίγο πιο φωτεινό background */
+  transform: scale(1.02);
+}
+
+/* --- Add Athlete Button --- */
+#addAthleteBtn {
+  background: linear-gradient(145deg, #d2b48c, #f5deb3);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 100%;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(160,82,45,0.5);
+}
+
+#addAthleteBtn:hover {
+  background: linear-gradient(145deg, #f5deb3, #d2b48c);
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(160,82,45,0.7);
+}
+
+#addAthleteBtn:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* --- Form Container Reactive --- */
+#athletes-section {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: rgba(210,180,140,0.95);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+}
+
+#athletes-section:hover {
+  box-shadow: 0 0 35px rgba(160,82,45,0.5);
+  transform: translateY(-3px);
+}
+
+/* --- Responsive tweaks --- */
+@media (max-width: 480px) {
+  #athleteForm input[type="text"],
+  #athleteForm input[type="number"],
+  #athleteForm select,
+  #athleteForm input[type="file"] {
+    padding: 18px 20px;
+    font-size: 1.5rem;
+  }
+  #addAthleteBtn { font-size: 1.3rem; padding: 18px; }
+}
+/* --- Players List --- */
+#playersDisplay {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+}
+
+#playersDisplay li {
+  background-color: #fff; /* λευκό background */
+  color: #000; /* μαύρο κείμενο */
+  margin-bottom: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#playersDisplay li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(160,82,45,0.3);
+}
+
+#playersDisplay img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #d2b48c;
+}
+
+/* --- Notification --- */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #d2b48c; /* ανοιχτό καφέ */
+  color: #fff; /* λευκό κείμενο */
+  padding: 14px 20px;
+  border-radius: 12px;
+  display: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(160,82,45,0.5);
+}
+
+.notification.show { display: block; }
+.notification.error { background: #a0522d; color: #fff; }
+
+/* --- Back Button --- */
+.back-btn {
+  position: fixed;   /* σταθερή θέση στην οθόνη */
+  top: 20px;         /* απόσταση από πάνω */
+  left: 20px;        /* απόσταση από αριστερά */
+  background: linear-gradient(145deg, #d2b48c, #f5deb3);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  padding: 16px 24px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  z-index: 999;      /* για να είναι πάνω από όλα */
+}
+
+.back-btn:hover {
+  background: linear-gradient(145deg, #f5deb3, #d2b48c);
+  transform: scale(1.03);
+}
+
+.back-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  #playersDisplay li { flex-direction: column; align-items: flex-start; }
+  #playersDisplay img { margin-bottom: 8px; }
+}
+select option {
+  background-color: #f5deb3; /* ανοιχτό καφέ */
+  color: #000;               /* μαύρο κείμενο */
+  font-size: 1.5rem;
+}
+
+#photoPreviewContainer {
+  display: flex;
+  justify-content: center; /* οριζόντια στο κέντρο */
+  margin-top: 20px;
+}
+
+#photoPreview {
+  display: none; /* θα εμφανίζεται όταν διαλέξει χρήστης φωτογραφία */
+  width: 220px;   /* μέγεθος εικόνας */
+  height: 220px;  /* μέγεθος εικόνας */
+  object-fit: cover; /* για να γεμίζει το κύκλο χωρίς παραμορφώσεις */
+  border-radius: 50%; /* κυκλικό σχήμα */
+  border: 3px solid #d2b48c; /* προαιρετικά περίγραμμα */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* προαιρετικό shadow */
+}
+.logo-container {
+  margin-top: 1vh; /* απόσταση από πάνω */
+  margin-bottom: 0vh; /* απόσταση από header */
+  text-align: center;
+}
+
+/* Logo image */
+.logo-img {
+  width: 45vw;      /* responsive μέγεθος ανάλογα με οθόνη */
+  margin-top: 20px;
+  margin-left: 12vh;
+  display: flex;
+}
+
+.logo-img:hover {
+  transform: scale(1.05); /* μικρό εφέ hover */
+}
+
+</style>
+</head>
+<body>
+  <div class="logo-container">
+  <img src="logo.png" alt="Tennis Scoretrack Logo" class="logo-img">
+</div>
+<button class="back-btn" onclick="window.location.href='athletes.html'">  ← Back</button>
+
+
+<div id="athletes-section">
+  <h2>➕ New Athlete</h2>
+  <form id="athleteForm">
+    <input type="text" name="firstName" placeholder="First Name" required>
+    <input type="text" name="lastName" placeholder="Last Name" required>
+    <input type="number" name="age" placeholder="Age" min="5" max="100">
+    <input type="number" name="height" placeholder="Height (cm)" min="100" max="250">
+    <input type="text" name="origin" placeholder="Country">
+    <select name="gender" required>
+      <option value="" disabled selected>Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <select name="handedness" required>
+      <option value="" disabled selected>Handedness</option>
+      <option value="Right-handed">Right-handed</option>
+      <option value="Left-handed">Left-handed</option>
+    </select>
+    <select name="backhand" required>
+      <option value="" disabled selected>Backhand</option>
+      <option value="One-handed">One-handed</option>
+      <option value="Two-handed">Two-handed</option>
+    </select>
+    <input type="file" name="photo" accept="image/*">
+ <div id="photoPreviewContainer">
+  <img id="photoPreview" src="" alt="Photo Preview"/>
+</div>
+
+  </form>
+  <button id="addAthleteBtn">Add Athlete</button>
+</div>
+
+<div id="notification" class="notification"></div>
+<h1>Start Your Journey!</h1>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const photoInput = document.querySelector('#athleteForm input[type="file"][name="photo"]');
+  const photoPreview = document.getElementById('photoPreview');
+
+  photoInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        photoPreview.src = e.target.result;
+        photoPreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    } else {
+      photoPreview.src = '';
+      photoPreview.style.display = 'none';
+    }
+  });
+});
+
+// --- Notifications ---
+function showNotification(msg, type='success') {
+  const notif = document.getElementById('notification');
+  notif.textContent = msg;
+  notif.className = 'notification show ' + (type==='error' ? 'error':'');
+  setTimeout(()=>{ notif.className='notification'; }, 3000);
+}
+
+// --- IndexedDB ---
+const dbRequest = indexedDB.open('AthleteDB', 1);
+dbRequest.onupgradeneeded = e => {
+  const db = e.target.result;
+  if(!db.objectStoreNames.contains('athletes')) db.createObjectStore('athletes', { keyPath:'id' });
+  if(!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath:'id' });
+};
+let db;
+dbRequest.onsuccess = e => { db = e.target.result; loadAthletes(); };
+dbRequest.onerror = e => console.error('DB Error:', e.target.error);
+
+// --- Save Athlete ---
+function saveAthlete(athlete, id) {
+  const tx = db.transaction('athletes','readwrite');
+  tx.objectStore('athletes').put({ id:id, ...athlete });
+  tx.oncomplete = ()=>loadAthletes();
+  tx.onerror = e => console.error(e.target.error);
+}
+
+// --- Save Photo ---
+function savePhoto(id, file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const tx = db.transaction('photos','readwrite');
+    tx.objectStore('photos').put({ id:id, photo:e.target.result });
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- Add Athlete Button ---
+// --- Add Athlete Button ---
+document.getElementById('addAthleteBtn').addEventListener('click', ()=>{
+  const form = document.getElementById('athleteForm');
+  const formData = new FormData(form);
+  const id = 'athlete_'+Date.now();
+  const athlete = {
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    age: formData.get('age'),
+    height: formData.get('height'),
+    origin: formData.get('origin'),
+    gender: formData.get('gender'),
+    handedness: formData.get('handedness'),
+    backhand: formData.get('backhand')
+  };
+
+  // Αποθήκευση στο IndexedDB
+  saveAthlete(athlete,id);
+
+  // Αποθήκευση φωτογραφίας αν υπάρχει
+  const file = formData.get('photo');
+  if(file && file.size>0) savePhoto(id,file);
+
+  // Καθαρισμός φόρμας
+  form.reset();
+
+  // Καθαρισμός preview εικόνας
+  const photoPreview = document.getElementById('photoPreview');
+  photoPreview.src = '';
+  photoPreview.style.display = 'none';
+
+  showNotification('Athlete added!');
+});
+
+
+</script>
+</body>
+</html>

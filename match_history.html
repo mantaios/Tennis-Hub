@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Match History</title>
+<style>
+body {
+   background-image: url('hards.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin:0;
+  padding:20px;
+}
+
+.back-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 15px;
+  font-size:2.8em;
+ 
+}
+
+
+h1 {
+  text-align:center;
+  font-size:4.8em;
+  color:#ffffff;
+  margin-bottom:100px;
+  font-weight:bold;
+}
+
+.matches-container {
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  max-width:900px;
+  margin:auto;
+}
+
+.match-card {
+  background-image: url('athletecard.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius:12px;
+  padding:50px;
+  border:4px solid #242424;
+  cursor:pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.match-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+}
+
+.match-header {
+  font-size:2em;
+  margin-bottom:8px;
+  color:#ffffff;
+  font-weight:bold;
+}
+
+.match-info {
+  font-size:1.4em;
+  color:#ffffff;
+  margin-bottom:12px;
+}
+
+.match-score {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.score-set {
+  background:#ffffff;
+  border-radius:12px;
+  padding:6px 12px;
+  min-width:50px;
+  text-align:center;
+  font-weight:bold;
+  color: #000;
+}
+
+.stats-container {
+  display: none;
+  background: rgba(36, 36, 36, 0.6); /* τελευταίο νούμερο = διαφάνεια */
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+
+.stats-title {
+  text-align:center;
+  font-weight:bold;
+  color:#ffffff;
+  font-size:1.2em;
+  margin-bottom:10px;
+}
+
+.stat-row {
+  margin-bottom:20px;
+}
+
+.stat-label {
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#e0e0e0;
+  font-size:15px;
+}
+
+.bar-wrapper {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-value {
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+}
+
+.bar {
+  position: relative;
+  height: 22px;
+  background: #242424;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.bar-fill-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #1848e4;
+  border-radius: 12px 0 0 12px;
+}
+
+.bar-fill-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #f4f7f4;
+  border-radius: 0 12px 12px 0;
+}
+
+.delete-btn {
+  background:#e91e63;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:29px 23px;
+  
+  margin-left: 650px;
+  font-weight:bold;
+  cursor:pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.delete-btn:hover {
+  background:#c2185b;
+  transform: scale(1.05);
+}
+
+.no-matches {
+  text-align:center;
+  color:#aaa;
+  margin-top:50px;
+}
+
+/* Custom Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+  padding: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.modal-content {
+  background-color: #1e1e1e;
+  margin: 10% auto; /* center vertically & horizontally */
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #242424;
+  max-width: 400px;
+  text-align: center;
+  color: #fff;
+  font-size: 1.1rem; /* bigger, readable text */
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.modal button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.modal .confirm-btn {
+  background-color: #e91e63;
+  color: #fff;
+}
+
+.modal .confirm-btn:hover {
+  background-color: #c2185b;
+}
+
+.modal .cancel-btn {
+  background-color: #444;
+  color: #fff;
+}
+
+.modal .cancel-btn:hover {
+  background-color: #666;
+}
+.no-matches {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff; /* κίτρινο σαν μπάλα τένις */
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px 0;
+  width: 100%; /* καταλαμβάνει όλη τη γραμμή */
+  background: rgba(0, 0, 0, 0.5); /* ημιδιαφανές μαύρο */
+}
+
+
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">  ← Back</a>
+<h1>Match History</h1>
+<div class="matches-container" id="matchesContainer"></div>
+
+<!-- Modal -->
+<div class="modal" id="deleteModal">
+  <div class="modal-content">
+    <p id="modalText"></p>
+    <div class="modal-buttons">
+      <button class="confirm-btn" id="modalConfirm">Delete</button>
+      <button class="cancel-btn" id="modalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const statsCategories = [
+    { key: "Άσοι", label: "Aces" },
+    { key: "Νταμπλ φολτ", label: "Double Faults" },
+    { key: "Νικητές", label: "Winners" },
+    { key: "Ατομικά λάθη", label: "Unforced Errors" },
+    { key: 'Λάθη υπό πίεση', label: "Forced Errors" },
+    { key: "Return Winners", label: "Return Winners", complex:true },
+    { key: "Return Errors", label: "Return Errors", complex:true },
+    { key: "Ποσοστό 1ου σερβίς", label: "1st Serve Percentage", percent:true },
+    { key: "Πόντοι με σερβίς", label: "Service Points" },
+    { key: "Πόντοι χωρίς σερβίς", label: "Points Without Service" },
+    { key: 'Κερδισμένοι Πόντοι', label: 'Points Won' },
+  
+   
+  ];
+
+let db;
+function openDBAndLoad() {
+  const request = indexedDB.open("TennisMatchesDB", 1);
+  request.onupgradeneeded = e => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains("matches")) {
+      db.createObjectStore("matches", { keyPath: "id", autoIncrement:true });
+    }
+  };
+  request.onsuccess = e => { db = e.target.result; loadMatches(); };
+  request.onerror = e => { console.error("IndexedDB error:", e.target.errorCode); };
+}
+
+function loadMatches() {
+  const container = document.getElementById("matchesContainer");
+  container.innerHTML = "";
+  const tx = db.transaction("matches","readonly");
+  const store = tx.objectStore("matches");
+  const req = store.getAll();
+  req.onsuccess = () => {
+    const matches = req.result;
+    if(!matches.length){
+      container.innerHTML = "<p class='no-matches'>Your matches will be saved here!</p>";
+
+      return;
+    }
+    matches.forEach(match=>{
+      const card = document.createElement("div");
+      card.className="match-card";
+
+      card.innerHTML = `
+        <div class="match-header">${match.players.player1} vs ${match.players.player2}</div>
+        <div class="match-info">Date: ${match.date || "N/A"} |Location: ${match.location || "N/A"}</div>
+      <div class="match-score">
+  ${
+    match.scores.player1.map((s,i)=>{
+      const p1 = s || 0;
+      const p2 = match.scores.player2[i] || 0;
+      // αν και οι δύο 0, δεν εμφανίζεται
+      if(p1 === 0 && p2 === 0) return '';
+      return `<span class="score-set">${p1}-${p2}</span>`;
+    }).join('')
+  }
+</div>
+
+        <div class="stats-container"></div>
+      `;
+      const statsContainer = card.querySelector(".stats-container");
+
+      card.addEventListener("click", e=>{
+        if(e.target.tagName==="BUTTON") return;
+        if(statsContainer.style.display==="none" || statsContainer.style.display===""){
+          statsContainer.innerHTML = "";
+          const title = document.createElement("div");
+          title.className="stats-title";
+          title.textContent="Stats";
+          statsContainer.appendChild(title);
+
+
+
+
+         statsCategories.forEach(cat => {
+  const key = cat.key;
+  let rawLeft = match.stats.player1[key] || 0;
+  let rawRight = match.stats.player2[key] || 0;
+
+  let barLeftPct, barRightPct;
+  let leftText, rightText;
+
+  // === Ποσοστό 1ου σερβίς ===
+  if(key === "Ποσοστό 1ου σερβίς") {
+    const leftStr = rawLeft ? String(rawLeft) : "0/0";
+    const rightStr = rawRight ? String(rawRight) : "0/0";
+
+    let leftWon = parseInt(leftStr.trim().split("/")[0]) || 0;
+    let rightWon = parseInt(rightStr.trim().split("/")[0]) || 0;
+
+    const total = leftWon + rightWon || 1;
+    barLeftPct = Math.round((leftWon / total) * 100);
+    barRightPct = 100 - barLeftPct;
+
+    leftText = leftStr;
+    rightText = rightStr;
+  } 
+
+  // === Πόντοι με σερβίς ===
+  else if(key === "Πόντοι με σερβίς") {
+    const p1Serve = match.stats.player1["Πόντοι με σερβίς"] || 0;
+    const p2Return = match.stats.player2["Πόντοι χωρίς σερβίς"] || 0;
+    const p2Serve = match.stats.player2["Πόντοι με σερβίς"] || 0;
+    const p1Return = match.stats.player1["Πόντοι χωρίς σερβίς"] || 0;
+
+    const p1Total = p1Serve + p2Return;
+    const p1pctInd = p1Total ? Math.round((p1Serve / p1Total) * 100) : 0;
+
+    const p2Total = p2Serve + p1Return;
+    const p2pctInd = p2Total ? Math.round((p2Serve / p2Total) * 100) : 0;
+
+    leftText = `${p1Serve}/${p1Total} (${p1pctInd}%)`;
+    rightText = `${p2Serve}/${p2Total} (${p2pctInd}%)`;
+
+    const totalForBar = p1Serve + p2Serve;
+    barLeftPct = totalForBar ? Math.round((p1Serve / totalForBar) * 100) : 50;
+    barRightPct = 100 - barLeftPct;
+  }
+
+  // === Πόντοι χωρίς σερβίς ===
+  else if(key === "Πόντοι χωρίς σερβίς") {
+    const p1Return = match.stats.player1["Πόντοι χωρίς σερβίς"] || 0;
+    const p2Serve = match.stats.player2["Πόντοι με σερβίς"] || 0;
+    const p2Return = match.stats.player2["Πόντοι χωρίς σερβίς"] || 0;
+    const p1Serve = match.stats.player1["Πόντοι με σερβίς"] || 0;
+
+    const p1Total = p1Return + p2Serve;
+    const p1pctInd = p1Total ? Math.round((p1Return / p1Total) * 100) : 0;
+
+    const p2Total = p2Return + p1Serve;
+    const p2pctInd = p2Total ? Math.round((p2Return / p2Total) * 100) : 0;
+
+    leftText = `${p1Return}/${p1Total} (${p1pctInd}%)`;
+    rightText = `${p2Return}/${p2Total} (${p2pctInd}%)`;
+
+    const totalForBar = p1Return + p2Return;
+    barLeftPct = totalForBar ? Math.round((p1Return / totalForBar) * 100) : 50;
+    barRightPct = 100 - barLeftPct;
+  } 
+
+  // === Κερδισμένοι Πόντοι ===
+  else if(key === "Κερδισμένοι Πόντοι") {
+    const p1Points = match.stats.player1["Κερδισμένοι Πόντοι"] || 0;
+    const p2Points = match.stats.player2["Κερδισμένοι Πόντοι"] || 0;
+    const totalPoints = p1Points + p2Points;
+
+    const p1pct = totalPoints ? Math.round((p1Points / totalPoints) * 100) : 50;
+    const p2pct = totalPoints ? Math.round((p2Points / totalPoints) * 100) : 50;
+
+    leftText = `${p1Points}/${totalPoints} (${p1pct}%)`;
+    rightText = `${p2Points}/${totalPoints} (${p2pct}%)`;
+
+    barLeftPct = p1pct;
+    barRightPct = p2pct;
+  } 
+
+  // === Όλα τα υπόλοιπα στατιστικά ===
+  else {
+    const leftValNum = Number(rawLeft) || 0;
+    const rightValNum = Number(rawRight) || 0;
+    const total = leftValNum + rightValNum || 1;
+    barLeftPct = Math.round((leftValNum / total) * 100);
+    barRightPct = Math.round((rightValNum / total) * 100);
+    leftText = leftValNum;
+    rightText = rightValNum;
+
+    // Έλεγχος για 0-0: 50%-50%
+    if ((rawLeft == 0 || rawLeft === "0") && (rawRight == 0 || rawRight === "0")) {
+      barLeftPct = 50;
+      barRightPct = 50;
+    }
+  }
+
+  // Δημιουργία DOM για τη γραμμή στατιστικού (αμετάβλητο)
+  const row = document.createElement("div");
+  row.className = "stat-row";
+
+  const label = document.createElement("div");
+  label.className = "stat-label";
+  label.textContent = cat.label;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "bar-wrapper";
+
+  const leftVal = document.createElement("div");
+  leftVal.className = "stat-value";
+  leftVal.textContent = leftText;
+
+  const bar = document.createElement("div");
+  bar.className = "bar";
+
+  const fillLeft = document.createElement("div");
+  fillLeft.className = "bar-fill-left";
+  fillLeft.style.width = barLeftPct + "%";
+
+  const fillRight = document.createElement("div");
+  fillRight.className = "bar-fill-right";
+  fillRight.style.width = barRightPct + "%";
+
+  bar.appendChild(fillLeft);
+  bar.appendChild(fillRight);
+
+  const rightVal = document.createElement("div");
+  rightVal.className = "stat-value";
+  rightVal.textContent = rightText;
+
+  wrapper.appendChild(leftVal);
+  wrapper.appendChild(bar);
+  wrapper.appendChild(rightVal);
+
+  row.appendChild(label);
+  row.appendChild(wrapper);
+  statsContainer.appendChild(row);
+});
+
+
+
+          statsContainer.style.display="block";
+        } else {
+          statsContainer.style.display="none";
+        }
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className="delete-btn";
+      deleteBtn.textContent="Delete Match";
+      deleteBtn.addEventListener("click", e=>{
+        e.stopPropagation();
+        openDeleteModal(match);
+      });
+      card.appendChild(deleteBtn);
+
+      container.prepend(card);
+    });
+  };
+  
+}
+
+const modal = document.getElementById("deleteModal");
+const modalText = document.getElementById("modalText");
+const modalConfirm = document.getElementById("modalConfirm");
+const modalCancel = document.getElementById("modalCancel");
+let currentMatch = null;
+
+function openDeleteModal(match) {
+  currentMatch = match;
+ modalText.textContent = `Are you sure you want to delete the match: ${match.players.player1} vs ${match.players.player2}?`;
+
+  
+  modal.style.display = "block";
+}
+
+modalConfirm.addEventListener("click", ()=>{
+  if(currentMatch){
+    const txDel = db.transaction("matches","readwrite");
+    txDel.objectStore("matches").delete(currentMatch.id);
+    txDel.oncomplete = loadMatches;
+    closeModal();
+  }
+});
+
+modalCancel.addEventListener("click", closeModal);
+modal.addEventListener("click", e=>{
+  if(e.target === modal) closeModal();
+});
+
+function closeModal() {
+  modal.style.display = "none";
+  currentMatch = null;
+}
+
+openDBAndLoad();
+</script>
+</body>
+</html>

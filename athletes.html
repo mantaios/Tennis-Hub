@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Athlete Profiles</title>
+<style>
+body {
+  background-image: url('clays.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  background-color: #121212;
+  color: #e0e0e0; /* πιο φωτεινό για καλή αντίθεση */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+/* --- Top Bar --- */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* --- Title --- */
+h1 {
+  color: #ffffff;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 60px;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 25px rgba(210, 216, 210, 0.6);
+}
+
+/* --- Athlete Profile Card --- */
+.athlete-card {
+  background-color: rgba(18, 18, 18, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(244, 247, 244, 0.3);
+  padding: 30px;
+  margin-bottom: 40px;
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.athlete-card:active {
+  transform: translateY(-15px);
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(250, 250, 250, 0.6);
+  background-color: black;
+}
+.athlete-card:hover {
+  transform: translateY(-15px);
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(250, 250, 250, 0.6);
+background-color: black;
+}
+/* --- Athlete Photo --- */
+.athlete-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 20px rgba(235, 235, 235, 0.7);
+}
+
+/* --- Athlete Details --- */
+.athlete-details {
+  flex: 1;
+   
+}
+.athlete-details h2 {
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  font-size: 2.4rem;
+  text-shadow: 0 0 6px rgba(252, 252, 252, 0.7);
+}
+.athlete-details p {
+  margin: 8px 0;
+  font-size: 1.3rem;
+  color: #ccc;
+}
+
+/* --- Action Buttons Container --- */
+.athlete-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* --- Navigation Buttons --- */
+/* --- Back & New Athlete Buttons --- */
+.back-btn, .new-btn {
+  background: linear-gradient(145deg, rgba(84, 52, 31, 0.8), rgba(160, 82, 45, 0.6)); /* σκούρο καφέ διαφανές */
+  color: #fff; /* λευκό κείμενο */
+  border: 1px solid rgba(255,255,255,0.3); /* λεπτό άσπρο περίγραμμα */
+  border-radius: 25px; /* smooth γωνίες */
+  padding: 14px 32px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* ήπιο shadow */
+  transition: all 0.25s ease-in-out;
+}
+
+.back-btn:hover, .new-btn:hover {
+  background: linear-gradient(145deg, rgba(160,82,45,0.8), rgba(210,180,140,0.6)); /* ανοιχτό καφέ όταν hover */
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+.back-btn:active, .new-btn:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.3);
+}
+
+
+
+
+/* --- Delete Button --- */
+.delete-btn {
+  color: #ff4d4d;
+  border: 1px solid #ffffff;
+  border-radius: 12px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.delete-btn:hover {
+   background-color: #cc0000;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255,77,77,0.8);
+}
+.delete-btn:active {
+  transform: scale(0.95);
+   background-color: #cc0000;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255,77,77,0.8)
+}
+
+/* --- Edit Button --- */
+.edit-btn {
+  
+  border: 1px solid #ffffff;
+  border-radius: 12px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.edit-btn:hover {
+   background: linear-gradient(145deg, #d2b48c, #f5deb3); /* ανοιχτό καφέ gradient */
+  color: #121212;
+  box-shadow: 0 0 12px rgba(253, 255, 254, 0.8);
+}
+.edit-btn:active {
+  transform: scale(0.95);
+   background: linear-gradient(145deg, #d2b48c, #f5deb3); /* ανοιχτό καφέ gradient */
+}
+
+/* --- Modal Overlay --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6); /* πιο ελαφρύ overlay για ανοιχτό καφέ */
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Edit Athlete Modal --- */
+#editModal .modal-content {
+  background: linear-gradient(145deg, #d2b48c, #a0522d); /* ανοιχτό καφέ gradient */
+  border-radius: 30px;
+  padding: 70px 100px;
+  box-shadow: 0 0 60px rgba(160, 82, 45, 0.7); /* καφέ shadow */
+  border: 2px solid #ffffff; /* άσπρο περίγραμμα */
+  max-width: 1000px;
+  width: 90%;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  color: #ffffff; /* άσπρο κείμενο */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#editModal h2 {
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(160, 82, 45, 0.8); /* shadow σε καφέ απόχρωση */
+}
+
+#editForm label {
+  font-size: 1.2rem;
+  color: #ffffff; /* άσπρο label */
+}
+
+#editForm input, #editForm select {
+  font-size: 1.1rem;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #ffffff; /* άσπρα περιγράμματα */
+  background-color: rgba(255, 255, 255, 0.1); /* ελαφρώς διαφανές για να ξεχωρίζει */
+  color: #ffffff;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+
+/* --- Modal Buttons (βελτιωμένα) --- */
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+  gap: 30px; /* περισσότερο κενό */
+}
+
+.modal-btn {
+  padding: 18px 36px;    /* πιο μεγάλα */
+  border-radius: 20px;   /* πιο στρογγυλεμένα */
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.4rem;     /* πιο ευδιάκριτα */
+  transition: all 0.3s ease;
+  min-width: 150px;      /* ίδια διάσταση */
+  text-transform: uppercase;
+}
+
+/* Επιβεβαίωση - ανοιχτό καφέ με άσπρο κείμενο */
+.modal-btn.confirm {
+  background: linear-gradient(145deg, #a0522d, #d2b48c); /* καφέ gradient */
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px rgba(160, 82, 45, 0.8);
+}
+
+.modal-btn.confirm:hover {
+  background: linear-gradient(145deg, #d2b48c, #a0522d);
+  color: #ffffff;
+}
+
+/* Ακύρωση - πιο σκούρο καφέ / γκρι με άσπρο */
+.modal-btn.cancel {
+  background: linear-gradient(145deg, #8b4513, #654321); /* σκούρο καφέ */
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+.modal-btn.cancel:hover {
+  background: linear-gradient(145deg, #d2b48c, #a0522d);
+  color: #121212;
+}
+
+/* --- Edit Modal Buttons --- */
+#editModal .modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+
+/* --- Delete Athlete Modal --- */
+#deleteModal .modal-content {
+  background: linear-gradient(145deg, #d2b48c, #a0522d); /* ανοιχτό καφέ gradient */
+  border-radius: 25px;
+  padding: 60px 50px;
+  box-shadow: 0 0 50px rgba(160,82,45,0.7); /* καφέ shadow */
+  border: 2px solid #ffffff; /* άσπρο περίγραμμα */
+  max-width: 500px;
+  width: 90%;
+  font-size: 1.2rem;
+  color: #ffffff;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#deleteModal p {
+  margin-bottom: 45px;
+  font-size: 2.2rem;
+  color: #ffffff; /* άσπρο κείμενο */
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(160,82,45,0.8); /* shadow καφέ για ανάγλυφο */
+}
+
+#deleteModal .modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  margin-top: 50px;
+}
+
+/* Delete Confirm Button */
+#deleteModal .modal-btn.confirm {
+  background: linear-gradient(145deg, #a0522d, #d2b48c); /* καφέ gradient */
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px rgba(160,82,45,0.8);
+}
+#deleteModal .modal-btn.confirm:hover {
+  background: linear-gradient(145deg, #d2b48c, #a0522d);
+  transform: scale(1.05);
+}
+
+/* Cancel Button */
+#deleteModal .modal-btn.cancel {
+  background: linear-gradient(145deg, #2a2a2a, #333); /* σκούρο για αντίθεση */
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+#deleteModal .modal-btn.cancel:hover {
+  background: linear-gradient(145deg, #d2b48c, #a0522d); /* ανοιχτό καφέ hover */
+  color: #121212;
+  transform: scale(1.05);
+}
+.no-athletes {
+  font-size: 2rem; /* μεγάλο και ευδιάκριτο */
+  font-weight: bold;
+  color: #ffffff; /* κίτρινο σαν μπάλα τένις */
+  text-align: center;
+  margin: 20px 0;
+  padding: 15px 0;
+  width: 100%; /* καταλαμβάνει όλη τη γραμμή */
+  background: rgba(255, 255, 255, 0.5); /* ημιδιαφανές μαύρο */
+ 
+  border-radius: 8px; /* λίγο στρογγυλεμένες άκρες */
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="back-btn" onclick="window.location.href='index.html'">  ← Back</button>
+  <button class="new-btn" onclick="window.location.href='add_athletes.html'"> New Athlete</button>
+</div>
+
+<h1>Athlete Profiles</h1>
+
+<div id="athleteContainer"></div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <p id="modalText">Are you sure you want to delete this athlete?</p>
+    <div class="modal-buttons">
+      <button id="confirmDelete" class="modal-btn confirm">Delete</button>
+      <button id="cancelDelete" class="modal-btn cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Athlete Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h2>Edit Athlete</h2>
+    <form id="editForm">
+      <div class="form-row">
+        <label>First Name: <input type="text" name="firstName" required></label>
+        <label>Last Name: <input type="text" name="lastName" required></label>
+      </div>
+      <div class="form-row">
+        <label>Age: <input type="number" name="age"></label>
+        <label>Height (cm): <input type="number" name="height"></label>
+      </div>
+      <label>Country: <input type="text" name="origin"></label>
+      <div class="form-row">
+        <label>Gender:
+          <select name="gender" required>
+            <option value="" disabled selected>Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </label>
+        <label>Handedness:
+          <select name="handedness" required>
+            <option value="" disabled selected>Handedness</option>
+            <option value="Right-handed">Right-handed</option>
+            <option value="Left-handed">Left-handed</option>
+          </select>
+        </label>
+        <label>Backhand:
+          <select name="backhand" required>
+            <option value="" disabled selected>Backhand</option>
+            <option value="One-handed">One-handed</option>
+            <option value="Two-handed">Two-handed</option>
+          </select>
+        </label>
+      </div>
+      <label>Photo: <input type="file" name="photo" accept="image/*"></label>
+      <div class="modal-buttons">
+        <button type="submit" class="modal-btn confirm">Save</button>
+        <button type="button" id="cancelEdit" class="modal-btn cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+<script>
+  const DEFAULT_PHOTO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAADm7Q...'; // βάση placeholder
+
+// --- IndexedDB Setup ---
+const dbRequest = indexedDB.open('AthleteDB', 1);
+let db;
+
+// --- Ανάγκη αναβάθμισης ή αρχικοποίησης βάσης ---
+dbRequest.onupgradeneeded = e => {
+  const db = e.target.result;
+  if(!db.objectStoreNames.contains('athletes')) {
+    db.createObjectStore('athletes', { keyPath: 'id' });
+  }
+  if(!db.objectStoreNames.contains('photos')) {
+    db.createObjectStore('photos', { keyPath: 'id' });
+  }
+
+  // Προσθήκη default photo
+  const photoStore = e.target.transaction.objectStore('photos');
+  photoStore.put({ id: 'default', photo: DEFAULT_PHOTO });
+};
+
+// --- Επιτυχής άνοιγμα βάσης ---
+dbRequest.onsuccess = e => {
+  db = e.target.result;
+  loadAthletes();
+};
+
+// --- Σφάλμα βάσης ---
+dbRequest.onerror = e => console.error('DB Error:', e.target.error);
+
+
+// --- Load Athletes ---
+function loadAthletes() {
+  const container = document.getElementById('athleteContainer');
+  container.innerHTML = '';
+  const tx = db.transaction('athletes','readonly');
+  const store = tx.objectStore('athletes');
+  
+  store.getAll().onsuccess = e => {
+    const athletes = e.target.result;
+    if(!athletes.length) { 
+     container.innerHTML = '<p class="no-athletes">Your Athletes will be saved here!</p>';
+
+      return; 
+    }
+
+    athletes.forEach(a => {
+      const card = document.createElement('div');
+      card.classList.add('athlete-card');
+      card.style.cursor = 'pointer';
+
+      // Όταν πατάει ο χρήστης την κάρτα, πηγαίνει στο athleteProfile.html
+      card.onclick = () => {
+        window.location.href = `athleteProfile.html?id=${a.id}`;
+      };
+
+      // --- Photo ---
+      const img = document.createElement('img');
+      img.classList.add('athlete-photo');
+      img.alt = `${a.firstName} ${a.lastName}`;
+      const photoTx = db.transaction('photos','readonly');
+photoTx.objectStore('photos').get(a.id).onsuccess = ev => {
+  if(ev.target.result && ev.target.result.photo){
+    img.src = ev.target.result.photo;
+  } else {
+    // Πάρε τη default photo από IndexedDB
+    const defaultTx = db.transaction('photos','readonly');
+    defaultTx.objectStore('photos').get('default').onsuccess = e => {
+      if(e.target.result && e.target.result.photo){
+        img.src = e.target.result.photo;
+      }
+    };
+  }
+};
+
+      card.appendChild(img);
+
+      // --- Details ---
+      const details = document.createElement('div');
+      details.classList.add('athlete-details');
+      details.innerHTML = `
+        <h2>${a.firstName} ${a.lastName}</h2>
+        <p>Age: ${a.age || '-'}</p>
+        <p>Height: ${a.height || '-'} cm</p>
+        <p>Country: ${a.origin || '-'}</p>
+        <p> ${a.handedness || '-'}</p>
+        <p> ${a.backhand || '-'} Backhand</p>
+      `;
+      card.appendChild(details);
+
+      // --- Buttons Container (Delete/Edit) --- 
+      const btnContainer = document.createElement('div');
+      btnContainer.style.display = 'flex';
+      btnContainer.style.gap = '10px';
+      btnContainer.style.marginTop = '10px';
+      btnContainer.style.justifyContent = 'flex-end';
+
+      // --- Delete Button ---
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '🗑';
+      deleteBtn.classList.add('delete-btn');
+      btnContainer.appendChild(deleteBtn);
+
+      deleteBtn.onclick = (event) => {
+        event.stopPropagation(); // Αποτρέπουμε το click στην κάρτα
+        const modal = document.getElementById('deleteModal');
+        const modalText = document.getElementById('modalText');
+        modalText.textContent = `Are you sure you want to delete ${a.firstName} ${a.lastName}?`;
+        modal.style.display = 'flex';
+
+        const confirmBtn = document.getElementById('confirmDelete');
+        const cancelBtn = document.getElementById('cancelDelete');
+
+        const closeModal = () => modal.style.display = 'none';
+
+        confirmBtn.onclick = () => {
+          const delTx = db.transaction('athletes','readwrite');
+          delTx.objectStore('athletes').delete(a.id);
+          const delPhotoTx = db.transaction('photos','readwrite');
+          delPhotoTx.objectStore('photos').delete(a.id);
+          closeModal();
+          loadAthletes();
+        };
+
+        cancelBtn.onclick = closeModal;
+      };
+
+      // --- Edit Button ---
+      const editBtn = document.createElement('button');
+      editBtn.textContent = '✏️';
+      editBtn.classList.add('edit-btn');
+      btnContainer.appendChild(editBtn);
+
+      editBtn.onclick = (event) => {
+        event.stopPropagation(); // Αποτρέπουμε το click στην κάρτα
+        const modal = document.getElementById('editModal');
+        const form = document.getElementById('editForm');
+        modal.style.display = 'flex';
+
+        // Προσθήκη τρεχόντων τιμών
+        form.firstName.value = a.firstName;
+        form.lastName.value = a.lastName;
+        form.age.value = a.age || '';
+        form.height.value = a.height || '';
+        form.origin.value = a.origin || '';
+        form.gender.value = a.gender || '';
+        form.handedness.value = a.handedness || '';
+        form.backhand.value = a.backhand || '';
+
+        const closeModal = () => modal.style.display = 'none';
+        document.getElementById('cancelEdit').onclick = closeModal;
+
+        form.onsubmit = (e) => {
+          e.preventDefault();
+
+          const updatedAthlete = {
+            id: a.id,
+            firstName: form.firstName.value,
+            lastName: form.lastName.value,
+            age: Number(form.age.value) || null,
+            height: Number(form.height.value) || null,
+            origin: form.origin.value,
+            gender: form.gender.value,
+            handedness: form.handedness.value,
+            backhand: form.backhand.value
+          };
+
+          // Αποθήκευση στον IndexedDB
+          const tx = db.transaction('athletes','readwrite');
+          tx.objectStore('athletes').put(updatedAthlete);
+
+          // Αν υπάρχει νέα φωτογραφία
+          const photoFile = form.photo.files[0];
+          if(photoFile){
+            const reader = new FileReader();
+            reader.onload = ev => {
+              const photoTx = db.transaction('photos','readwrite');
+              photoTx.objectStore('photos').put({ id: a.id, photo: ev.target.result });
+            };
+            reader.readAsDataURL(photoFile);
+          }
+
+          closeModal();
+          loadAthletes();
+        };
+      };
+
+      card.appendChild(btnContainer);
+      container.appendChild(card);
+    });
+  };
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>

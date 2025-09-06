@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <title>Καταγραφή Αγώνα Τένις</title>
+  <style>
+  /* --- Global --- */
+  /* --- Global --- */
+body {
+  background-color: #121212;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Titles --- */
+h1, h2 {
+  color: #05ee10;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+  margin-top: 40px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  font-size: 2em;
+}
+
+/* --- Forms --- */
+form {
+  max-width: 700px;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 40px;
+  background-color: #1f1f1f;
+  padding: 30px 25px;
+  border-radius: 18px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.7);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+form:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 30px rgba(5,238,16,0.6);
+}
+
+/* --- Labels --- */
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #05ee10;
+  font-size: 1.4em;
+}
+
+/* --- Inputs & Selects --- */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select {
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.05rem;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  font-size: 1.5em;
+}
+
+input:hover, select:hover {
+  background-color: #333333;
+  box-shadow: 0 0 8px rgba(5,238,16,0.5);
+}
+
+input:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 12px rgba(5,238,16,0.8);
+}
+
+select option {
+  background-color: #242424;
+  color: #ffffff;
+  padding: 8px 12px;
+  font-size: 1.4em;
+}
+
+select option:hover {
+  background-color: #05ee10;
+  color: #121212;
+}
+
+/* --- Buttons --- */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+button, #addAthleteBtn, #startMatchBtn {
+  background: linear-gradient(145deg, #05ee10, #008000);
+  color: #121212;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 34px 108px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+}
+
+button:hover, #addAthleteBtn:hover, #startMatchBtn:hover {
+  background: linear-gradient(145deg, #05ee10, #32cd32);
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(5,238,16,0.8);
+}
+
+button:active, #addAthleteBtn:active, #startMatchBtn:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* --- Court Image --- */
+#courtImage {
+  border: 2px solid #05ee10;
+  box-shadow: 0 0 12px rgba(5,238,16,0.6);
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 30px 90px;
+  border-radius: 12px;
+}
+
+/* --- Player selection wrapper --- */
+.player-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #1e1e1e;
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+ 
+}
+
+.player-select-wrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+}
+
+.player-select-wrapper select {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  background-color: #242424;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.player-select-wrapper select:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(5,238,16,0.6);
+}
+
+.player-photo-wrapper {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.player-photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #05ee10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.player-photo-wrapper img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(5,238,16,0.6);
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  form {
+    padding: 16px;
+  }
+  .player-select-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .button-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+.back-btn {
+  background-color: #fcfcfc;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 20px;
+  padding: 16px 32px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+}
+
+.back-btn:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.3);
+}
+
+  </style>
+</head>
+<body>
+
+  <h1>🎾 Create New Game</h1>
+  <button class="back-btn" onclick="window.location.href='index.html'">
+  ← Back
+</button>
+
+
+  <form id="matchForm">
+    <label for="player1">Player 1:</label>
+    <div class="player-select-wrapper">
+      <select id="player1" required></select>
+      <div class="player-photo-wrapper">
+        <img id="player1Photo" src="" alt="Player 1 Photo">
+      </div>
+    </div>
+
+    <label for="player2">Player 2:</label>
+    <div class="player-select-wrapper">
+      <select id="player2" required></select>
+      <div class="player-photo-wrapper">
+        <img id="player2Photo" src="" alt="Player 2 Photo">
+      </div>
+    </div>
+
+    <label for="tournament">Tournament Name:</label>
+    <input type="text" id="tournament" required />
+
+    <label for="location">Game Location:</label>
+    <input type="text" id="location" required />
+
+    <label for="date">Game Date:</label>
+    <input type="date" id="date" required />
+
+    <label for="time">Game Time:</label>
+    <input type="time" id="time" required />
+  </form>
+
+  <!-- Μενού Κανόνες -->
+  <form id="rulesForm">
+    <h2 style="margin-bottom: 30px;">📋 Game Rules</h2>
+
+    <label for="numSets">Number of Sets:</label>
+    <select id="numSets" required>
+      <option value="1">1 Set</option>
+      <option value="3" selected>3 Sets</option>
+      <option value="5">5 Sets</option>
+      <option value="7">7 Sets</option>
+    </select>
+
+    <label for="gamesPerSet">Choose Games per Set:</label>
+    <select id="gamesPerSet" required>
+      <option value="1">1 Game</option>
+      <option value="2">2 Games</option>
+      <option value="3">3 Games</option>
+      <option value="4">4 Games</option>
+      <option value="5">5 Games</option>
+      <option value="6" selected>6 Games</option>
+      <option value="7">7 Games</option>
+      <option value="8">8 Games</option>
+      <option value="9">9 Games</option>
+      <option value="10">10 Games</option>
+    </select>
+
+    <label for="tiebreak">Tiebreak:</label>
+    <select id="tiebreak" required>
+      <option value="yes" selected>Yes</option>
+      <option value="no">No</option>
+    </select>
+
+    <label for="courtType">Choose Tereen:</label>
+    <div style="display: flex; align-items: center; gap: 20px; margin-top: 5px;">
+      <select id="courtType" onchange="updateCourtImage()" style="width: 160px; padding: 10px; border-radius: 8px; border: none; font-size: 1rem;">
+        <option value="default" selected>Grass</option>
+        <option value="clay">Clay</option>
+        <option value="blue">Hard</option>
+      </select>
+
+      <div id="courtImage" style="
+        width: 180px; 
+        height: 120px; 
+        border-radius: 12px; 
+        box-shadow: 0 0 12px #000; 
+        background-size: cover; 
+        background-position: center;
+        background-repeat: no-repeat;
+      ">
+      </div>
+    </div>
+  </form>
+
+  <button id="startMatchBtn">🎾 Start Game</button>
+
+ <script>
+  // --- Ενημέρωση εικόνας γηπέδου ---
+  function updateCourtImage() {
+    const type = document.getElementById('courtType').value;
+    const court = document.getElementById('courtImage');
+
+    if (type === 'blue') {
+      court.style.background = 'url("hard.jpg")';
+      court.style.display = 'block';
+    } else if (type === 'clay') {
+      court.style.background = 'url("clay.jpg")';
+      court.style.display = 'block';
+    } else if (type === 'default') {
+      court.style.background = 'url("grass.jpg")';
+      court.style.display = 'block';
+    } else {
+      court.style.display = 'none';
+      court.style.background = 'none';
+    }
+
+    court.style.backgroundSize = 'cover';
+    court.style.backgroundPosition = 'center';
+  }
+
+  // --- Άνοιγμα Βάσης AthleteDB ---
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open("AthleteDB", 1);
+
+      request.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+
+      request.onerror = (event) => {
+        reject("Σφάλμα στο άνοιγμα της βάσης:", event.target.error);
+      };
+    });
+  }
+
+  // --- Φόρτωση όλων των παιχτών από το object store "athletes" ---
+  function getAllAthletes() {
+    return new Promise(async (resolve, reject) => {
+      const db = await openDB();
+      const transaction = db.transaction("athletes", "readonly");
+      const store = transaction.objectStore("athletes");
+
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        resolve(request.result || []);
+      };
+
+      request.onerror = (event) => {
+        reject("Σφάλμα ανάγνωσης:", event.target.error);
+      };
+    });
+  }
+
+  // --- Γέμισμα Dropdowns από τη Βάση ---
+async function populateDropdownsFromDB() {
+  const player1Select = document.getElementById("player1");
+  const player2Select = document.getElementById("player2");
+  const player1Img = document.getElementById("player1Photo");
+  const player2Img = document.getElementById("player2Photo");
+
+  player1Select.innerHTML = '<option value="" disabled selected>Επιλέξτε Παίκτη 1</option>';
+  player2Select.innerHTML = '<option value="" disabled selected>Επιλέξτε Παίκτη 2</option>';
+
+  try {
+    const athletes = await getAllAthletes();
+
+    // Άνοιγμα DB για photos
+    const db = await openDB();
+    const tx = db.transaction("photos", "readonly");
+    const store = tx.objectStore("photos");
+    const photosRequest = store.getAll();
+
+    photosRequest.onsuccess = () => {
+      const photos = photosRequest.result; // array με {id, photo}
+
+      athletes.forEach((athlete) => {
+        const fullName = `${athlete.firstName} ${athlete.lastName}`;
+        const photoEntry = photos.find(p => p.id === athlete.id);
+        const photoURL = photoEntry ? photoEntry.photo : "";
+
+        // Το value κρατάει το όνομα αντί για το id
+        const option1 = new Option(fullName, fullName);
+        option1.dataset.photo = photoURL;
+        const option2 = new Option(fullName, fullName);
+        option2.dataset.photo = photoURL;
+
+        player1Select.add(option1);
+        player2Select.add(option2);
+      });
+
+      // --- Event listeners για εμφάνιση φωτογραφίας ---
+      player1Select.addEventListener('change', () => {
+        const selected = player1Select.selectedOptions[0];
+        if (selected && selected.dataset.photo) {
+          player1Img.src = selected.dataset.photo;
+          player1Img.style.display = 'block';
+        } else {
+          player1Img.style.display = 'none';
+        }
+      });
+
+      player2Select.addEventListener('change', () => {
+        const selected = player2Select.selectedOptions[0];
+        if (selected && selected.dataset.photo) {
+          player2Img.src = selected.dataset.photo;
+          player2Img.style.display = 'block';
+        } else {
+          player2Img.style.display = 'none';
+        }
+      });
+
+      // --- Εμφάνιση φωτογραφιών και επιλογών αν υπάρχει localStorage ---
+      const stored = JSON.parse(localStorage.getItem('currentMatch'));
+      if (stored) {
+        if (stored.player1) {
+          const opt1 = Array.from(player1Select.options).find(o => o.value === stored.player1);
+          if (opt1) {
+            player1Select.value = stored.player1;
+            player1Img.src = opt1.dataset.photo || "";
+            player1Img.style.display = player1Img.src ? 'block' : 'none';
+          }
+        }
+        if (stored.player2) {
+          const opt2 = Array.from(player2Select.options).find(o => o.value === stored.player2);
+          if (opt2) {
+            player2Select.value = stored.player2;
+            player2Img.src = opt2.dataset.photo || "";
+            player2Img.style.display = player2Img.src ? 'block' : 'none';
+          }
+        }
+      }
+    };
+
+    photosRequest.onerror = (event) => {
+      console.error("Σφάλμα ανάκτησης φωτογραφιών:", event.target.error);
+    };
+
+  } catch (err) {
+    console.error("Σφάλμα κατά τη φόρτωση παικτών:", err);
+  }
+}
+
+
+  // --- Αποθήκευση όλων των δεδομένων ---
+  function saveMatchData() {
+    const p1 = document.getElementById('player1').value;
+    const p2 = document.getElementById('player2').value;
+
+    if (!p1 || !p2 || p1 === p2) {
+      alert('Οι παίκτες πρέπει να είναι διαφορετικοί!');
+      return false;
+    }
+
+    const matchData = {
+      player1: p1,
+      player2: p2,
+      tournament: document.getElementById('tournament').value,
+      location: document.getElementById('location').value,
+      date: document.getElementById('date').value,
+      time: document.getElementById('time').value,
+      rules: {
+        numSets: document.getElementById('numSets').value,
+        gamesPerSet: document.getElementById('gamesPerSet').value,
+        tiebreak: document.getElementById('tiebreak').value,
+        courtType: document.getElementById('courtType').value
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+    return true;
+  }
+
+  // --- Αυτο-αποθήκευση σε κάθε αλλαγή ---
+  function saveMatchDataFromInputs() {
+    const matchData = {
+      player1: document.getElementById('player1').value,
+      player2: document.getElementById('player2').value,
+      tournament: document.getElementById('tournament').value,
+      location: document.getElementById('location').value,
+      date: document.getElementById('date').value,
+      time: document.getElementById('time').value,
+      rules: {
+        numSets: document.getElementById('numSets').value,
+        gamesPerSet: document.getElementById('gamesPerSet').value,
+        tiebreak: document.getElementById('tiebreak').value,
+        courtType: document.getElementById('courtType').value
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    localStorage.setItem('currentMatch', JSON.stringify(matchData));
+  }
+
+  function addAutoSaveListeners() {
+    const fields = [
+      'player1', 'player2', 'tournament', 'location', 'date', 'time',
+      'numSets', 'gamesPerSet', 'tiebreak', 'courtType'
+    ];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', saveMatchDataFromInputs);
+        el.addEventListener('input', saveMatchDataFromInputs);
+      }
+    });
+  }
+
+  // --- Φόρτωση δεδομένων από localStorage ---
+  function loadMatchData() {
+    const stored = localStorage.getItem('currentMatch');
+    if (!stored) return;
+
+    const data = JSON.parse(stored);
+
+    if (data.player1) document.getElementById('player1').value = data.player1;
+    if (data.player2) document.getElementById('player2').value = data.player2;
+    if (data.tournament) document.getElementById('tournament').value = data.tournament;
+    if (data.location) document.getElementById('location').value = data.location;
+    if (data.date) document.getElementById('date').value = data.date;
+    if (data.time) document.getElementById('time').value = data.time;
+
+    if (data.rules) {
+      document.getElementById('numSets').value = data.rules.numSets;
+      document.getElementById('gamesPerSet').value = data.rules.gamesPerSet;
+      document.getElementById('tiebreak').value = data.rules.tiebreak;
+      document.getElementById('courtType').value = data.rules.courtType;
+      updateCourtImage();
+    }
+  }
+
+  // --- Εκκίνηση ---
+  document.addEventListener('DOMContentLoaded', () => {
+    populateDropdownsFromDB().then(() => {
+      loadMatchData();
+    });
+    addAutoSaveListeners();
+
+    document.getElementById('startMatchBtn').addEventListener('click', () => {
+      if (saveMatchData()) {
+        window.location.href = 'scoretrack.html';
+      }
+    });
+
+    updateCourtImage();
+  });
+</script>
+
+
+</body>
+</html>

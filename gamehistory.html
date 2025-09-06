@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Game History</title>
+  <style>
+body {
+  background-image: url('gamehistory.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.6;
+  color: #ffffff; /* βασικό κείμενο λευκό */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #ffffff; /* ανοιχτό πράσινο */
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
+  font-size: 3em;
+}
+.back-link:hover {
+  color: #ffffff; /* λευκό στο hover */
+}
+
+h1 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 4.5em;
+  color: #ffffff; /* σκούρο πράσινο */
+  margin-bottom: 35px;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.player-names {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+}
+
+.player-photo {
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff; /* σκούρο πράσινο */
+  transition: transform 0.2s, border-color 0.2s;
+}
+.player-photo:hover {
+  transform: scale(1.1);
+  border-color: #a8d5ba; /* ανοιχτό πράσινο */
+}
+
+.player-name {
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: #ffffff; /* ανοιχτό πράσινο */
+  text-shadow: 1px 1px 2px #000;
+}
+
+.set-block {
+  background: rgba(27, 67, 50, 0.85); /* σκούρο πράσινο διάφανο */
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.7);
+  border: 2px solid #144d33; /* σκούρο πράσινο */
+  transition: box-shadow 0.3s;
+}
+.set-block:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.9);
+}
+
+.set-block h2 {
+  margin-top: 0;
+  color: #ffffff;
+  font-size: 2.5em; /* μεγαλύτερο από 1.8em */
+  border-bottom: 3px solid #a8d5ba;
+  padding-bottom: 8px;
+}
+
+.game-title {
+  font-weight: bold;
+  font-size: 1.7em; /* μεγαλύτερο από 1.3em */
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+
+.games-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.game-block {
+  background: rgba(27, 67, 50, 0.7); /* σκούρο πράσινο */
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 6px solid #a8d5ba; /* ανοιχτό πράσινο */
+  transition: transform 0.2s, background 0.3s, border-color 0.3s;
+}
+.game-block:hover {
+  transform: scale(1.05);
+  background: rgba(40, 90, 60, 0.8); /* λίγο πιο ανοιχτό πράσινο στο hover */
+  border-color: #ffffff; /* λευκό στο hover */
+}
+
+
+
+.points {
+  font-size: 1rem;
+  color: #a8d5ba; /* ανοιχτό πράσινο */
+  line-height: 1.5;
+}
+
+  </style>
+</head>
+<body>
+
+<a href="scoretrack.html" class="back-link">   ← Back</a>
+<h1>Game History</h1>
+
+<div id="stats-body"></div>
+<div id="historyContainer"></div>
+
+<script>
+async function getPlayerIdByName(playerName) {
+  return new Promise((resolve) => {
+    const request = indexedDB.open('AthleteDB', 1);
+    request.onsuccess = e => {
+      const db = e.target.result;
+      const tx = db.transaction('athletes', 'readonly');
+      const store = tx.objectStore('athletes');
+      store.getAll().onsuccess = ev => {
+        const athlete = ev.target.result.find(a => `${a.firstName} ${a.lastName}` === playerName);
+        resolve(athlete?.id || null);
+      };
+    };
+    request.onerror = () => resolve(null);
+  });
+}
+
+async function getPlayerPhotoById(playerId) {
+  return new Promise((resolve) => {
+    if (!playerId) return resolve('https://via.placeholder.com/120');
+    const request = indexedDB.open('AthleteDB', 1);
+    request.onsuccess = e => {
+      const db = e.target.result;
+      const tx = db.transaction('photos', 'readonly');
+      const store = tx.objectStore('photos');
+      store.get(playerId).onsuccess = ev => {
+        resolve(ev.target.result?.photo || 'https://via.placeholder.com/120');
+      };
+    };
+    request.onerror = () => resolve('https://via.placeholder.com/120');
+  });
+}
+
+async function renderGameHistoryPage() {
+  const matchData = JSON.parse(localStorage.getItem("currentMatch")) || {};
+  const container = document.getElementById("historyContainer");
+  container.innerHTML = "";
+
+  const name1 = matchData.player1 || "Player 1";
+  const name2 = matchData.player2 || "Player 2";
+
+  const id1 = await getPlayerIdByName(name1);
+  const id2 = await getPlayerIdByName(name2);
+
+  const photo1 = await getPlayerPhotoById(id1);
+  const photo2 = await getPlayerPhotoById(id2);
+
+  const headerRow = document.createElement("div");
+  headerRow.className = "player-names";
+
+  const leftInfo = document.createElement("div");
+  leftInfo.className = "player-info";
+  leftInfo.innerHTML = `<img src="${photo1}" alt="${name1}" class="player-photo">
+                        <div class="player-name">${name1}</div>`;
+
+  const rightInfo = document.createElement("div");
+  rightInfo.className = "player-info";
+  rightInfo.innerHTML = `<img src="${photo2}" alt="${name2}" class="player-photo">
+                        <div class="player-name">${name2}</div>`;
+
+  headerRow.appendChild(leftInfo);
+  headerRow.appendChild(rightInfo);
+
+  document.getElementById("stats-body").appendChild(headerRow);
+
+  const gameHistory = matchData.gameHistory || [];
+
+ let totalGameCount = 1; // μετράμε όλα τα games συνεχόμενα
+
+gameHistory.forEach((set, setIndex) => {
+  const setDiv = document.createElement("div");
+  setDiv.className = "set-block";
+
+  const setTitle = document.createElement("h2");
+  setTitle.textContent = `Set ${setIndex + 1}`;
+  setDiv.appendChild(setTitle);
+
+  const gamesContainer = document.createElement("div");
+  gamesContainer.className = "games-container";
+
+  set.forEach((game) => {
+    if (game.length > 0) {
+      const gameDiv = document.createElement("div");
+      gameDiv.className = "game-block";
+
+      const gameTitle = document.createElement("div");
+      gameTitle.className = "game-title";
+      gameTitle.textContent = `Game ${totalGameCount}`;
+      totalGameCount++; // αυξάνουμε για κάθε πραγματικό game
+      gameDiv.appendChild(gameTitle);
+
+      const pointsP = document.createElement("div");
+      pointsP.className = "points";
+
+// Κάθε πόντος λίγο μεγαλύτερος με span
+     pointsP.innerHTML = game.map(p => {
+     return `<span style="font-size:1.6rem; font-weight:bold; color:#a8d5ba;">${p}</span>`;
+}).join(" , ");
+
+gameDiv.appendChild(pointsP);
+gamesContainer.appendChild(gameDiv);
+
+    }
+  });
+
+  setDiv.appendChild(gamesContainer);
+  container.appendChild(setDiv);
+});
+
+}
+
+renderGameHistoryPage();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <title>Game Stats</title>
+    <style>
+body {
+  background-color: #f0f0f0;
+  color: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.stats-container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  padding: 30px;
+  
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 2.5em; /* μεγαλύτερο και σταθερό */
+  color: #3b0a85;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.player-names {
+  display: flex;
+  justify-content: space-between; /* οι παίκτες πάνε δεξιά-αριστερά */
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column; /* κάθε παίκτης: φωτό πάνω, όνομα κάτω */
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.player-photo {
+  width: 165px;
+  height: 165px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #4b0082;
+}
+
+.player-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #3b0a85;
+  word-wrap: break-word;
+}
+
+
+
+
+/* Responsive για μικρές οθόνες */
+@media (max-width: 600px) {
+  .player-names {
+    flex-direction:row; /* οι δύο παίκτες στοιχίζονται κάτω-κάτω */
+    align-items: center;
+   
+  }
+
+  /* Το gap ανάμεσα στη φωτογραφία και το όνομα παραμένει οριζόντιο */
+  .player-info {
+    flex-direction: row; 
+    gap: 12px; /* παραμένει οριζόντιο */
+    justify-content: center;
+  }
+
+  .player-photo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .player-name {
+    font-size: 1rem;
+  }
+}
+
+
+
+
+
+
+
+.stat-row {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column; /* Τα βάζουμε σε στήλη: πρώτα label, μετά μπάρα */
+}
+
+.bar-wrapper {
+  display: grid;
+  grid-template-columns: 100px 1fr 150px; /* σταθερά πλάτη για ονόματα */
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-label {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 6px; /* λίγο διάστημα πάνω από τις μπάρες */
+  color: #333;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+
+}
+
+.bar {
+  position: relative;
+  height: 40px;
+  width: 600px;
+  background: #e0e0e0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+  margin-left: 30px;
+
+}
+
+.bar-fill-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #4b0082;
+  border-radius: 20px 0 0 20px;
+}
+
+.bar-fill-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #006400;
+  border-radius: 0 20px 20px 0;
+}
+
+
+.btn-reset {
+  display: block;
+  margin: 30px auto 0 auto;
+  padding: 16px 35px; /* μεγαλύτερο για καλύτερη αναγνωσιμότητα */
+  background: #3b0a85;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem; /* σταθερό μέγεθος */
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-reset:hover {
+  background: #2a0660;
+  transform: scale(1.05);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: #006400;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.8rem; /* μεγαλύτερο και σταθερό */
+  transition: color 0.2s;
+}
+
+.back-link:active :hover {
+  color: #3b0a85;
+}
+
+/* Μικρότερο font για τα συγκεκριμένα stats */
+
+
+.small-stat .stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px; /* να μην κολλάνε */
+  font-size: 5em;
+}
+
+.small-stat .stat-main {
+  font-size: 1rem;
+
+}
+.right-small-stat {
+  font-size: 1.3rem; /* μικρότερο font μόνο για δεξιά small stat */
+}
+
+.left-small-stat {
+  font-size: 1.5rem; /* μικρότερο font μόνο για αριστερά small stat */
+  color: #4b0082;  /* προαιρετικά διαφορετικό χρώμα */
+}
+
+.right-small-stat {
+  font-size: 1.5rem; /* μικρότερο font μόνο για δεξιά small stat */
+  color: #006400;  /* προαιρετικά διαφορετικό χρώμα */
+ 
+}
+
+
+
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 30px;
+  background: #fff; /* ίδιο με το stats container */
+  color: #3b0a85; /* ίδιο με τα headers / player names */
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1.3rem;
+  min-width: 90px;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* ελαφρύ shadow σαν stats-container */
+}
+
+.scoreboard .score {
+  padding: 12px 25px;
+  margin: 6px 0;
+  background: #e0e0e0; /* σαν τις μπάρες των stats */
+  color: #3b0a85; /* ίδιο με το text color */
+  border-radius: 28px;
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); /* subtle depth */
+  transition: background 0.3s, transform 0.15s;
+}
+
+.scoreboard .score:hover {
+  background: #d4d4d4; /* ελαφρώς πιο σκούρο στο hover */
+  transform: scale(1.03);
+}
+
+
+
+
+
+
+</style>
+</head>
+<body>
+
+  <a href="scoretrack.html" class="back-link">  ← Back</a>
+
+  <div class="stats-container">
+    <h2>Game Stats</h2>
+    
+    <div id="stats-body"></div>
+  </div>
+
+<script>
+  // Κατηγορίες στατιστικών
+  const statsCategories = [
+    { key: "Άσοι", label: "Aces" },
+    { key: "Νταμπλ φολτ", label: "Double Faults" },
+    { key: "Νικητές", label: "Winners" },
+    { key: "Ατομικά λάθη", label: "Unforced Errors" },
+    { key: 'Λάθη υπό πίεση', label: "Forced Errors" },
+    { key: "Return Winners", label: "Return Winners", complex:true },
+    { key: "Return Errors", label: "Return Errors", complex:true },
+    { key: "Ποσοστό 1ου σερβίς", label: "1st Serve Percentage", percent:true },
+    { key: "Πόντοι με σερβίς", label: "Service Points" },
+    { key: "Πόντοι χωρίς σερβίς", label: "Points Without Service" },
+    { key: 'Κερδισμένοι Πόντοι', label: 'Points Won' },
+  
+   
+  ];
+  
+
+  // Διάβασμα από localStorage
+  function getStats() {
+    return {
+      player1: JSON.parse(localStorage.getItem("statsPlayer1")) || {},
+      player2: JSON.parse(localStorage.getItem("statsPlayer2")) || {}
+    };
+  }
+
+  function formatValue(value) {
+    if (!value) return "0";
+    if (typeof value === "object") {
+      return `${value.percent || 0}% (${value.won||0}/${value.total||0})`;
+    }
+    return value;
+  }
+
+  function extractPercent(value) {
+    if (!value) return 0;
+    if (typeof value === "object") return value.percent || 0;
+    if (typeof value === "number") return value;
+    if (typeof value === "string" && value.includes("%")) {
+      return parseInt(value);
+    }
+    return 0;
+  }
+
+  // Υπολογισμός συγκριτικών μπαρών
+  function calcSplitBars(val1, val2) {
+    const total = (val1 || 0) + (val2 || 0);
+    if (total === 0) return { p1pct: 50, p2pct: 50 }; // ισομοιρασμένο
+    return {
+      p1pct: Math.round((val1 / total) * 100),
+      p2pct: Math.round((val2 / total) * 100)
+    };
+  }
+
+async function renderStats() {
+  const { player1: p1Stats, player2: p2Stats } = getStats();
+  const { player1: name1, player2: name2 } = getPlayerNames();
+
+  const container = document.getElementById("stats-body");
+  container.innerHTML = "";
+
+  // --- Λειτουργίες για ανάκτηση id και φωτογραφίας ---
+  async function getPlayerIdByName(playerName) {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('AthleteDB', 1);
+      request.onsuccess = e => {
+        const db = e.target.result;
+        const tx = db.transaction('athletes', 'readonly');
+        const store = tx.objectStore('athletes');
+        store.getAll().onsuccess = ev => {
+          const athlete = ev.target.result.find(a => `${a.firstName} ${a.lastName}` === playerName);
+          resolve(athlete?.id || null);
+        };
+      };
+      request.onerror = err => reject(err);
+    });
+  }
+
+  async function getPlayerPhotoById(playerId) {
+    return new Promise((resolve, reject) => {
+      if (!playerId) return resolve('DEFAULT_PHOTO_URL');
+      const request = indexedDB.open('AthleteDB', 1);
+      request.onsuccess = e => {
+        const db = e.target.result;
+        const tx = db.transaction('photos', 'readonly');
+        const store = tx.objectStore('photos');
+        store.get(playerId).onsuccess = ev => {
+          resolve(ev.target.result?.photo || 'DEFAULT_PHOTO_URL');
+        };
+      };
+      request.onerror = err => reject(err);
+    });
+  }
+
+  // --- Φόρτωση ids και φωτογραφιών ---
+   const id1 = await getPlayerIdByName(name1);
+  const id2 = await getPlayerIdByName(name2);
+  const photo1 = await getPlayerPhotoById(id1);
+  const photo2 = await getPlayerPhotoById(id2);
+
+  // --- Header row με εικόνες + scoreboard ---
+  const headerRow = document.createElement("div");
+  headerRow.className = "player-names"; // flex row
+
+  const leftInfo = document.createElement("div");
+  leftInfo.className = "player-info";
+  leftInfo.innerHTML = `
+    <img src="${photo1}" alt="${name1}" class="player-photo">
+    <div class="player-name">${name1}</div>
+  `;
+
+  const rightInfo = document.createElement("div");
+  rightInfo.className = "player-info";
+  rightInfo.innerHTML = `
+    <img src="${photo2}" alt="${name2}" class="player-photo">
+    <div class="player-name">${name2}</div>
+  `;
+
+  // --- Scoreboard στη μέση ---
+  const match = JSON.parse(localStorage.getItem("currentMatch")) || {};
+  const scores = match.scores || { player1: [], player2: [] };
+
+  const scoreboard = document.createElement("div");
+  scoreboard.className = "scoreboard";
+  scoreboard.innerHTML = `
+    <div class="score">${scores.player1.join(" | ") || "0"}</div>
+    <div class="score">${scores.player2.join(" | ") || "0"}</div>
+  `;
+
+  headerRow.appendChild(leftInfo);
+  headerRow.appendChild(scoreboard);
+  headerRow.appendChild(rightInfo);
+
+  container.appendChild(headerRow);
+
+
+
+  statsCategories.forEach(stat => {
+  let p1Text, p2Text;
+  let barP1pct, barP2pct;
+
+  // === Κερδισμένοι Πόντοι ===
+  if (stat.key === "Κερδισμένοι Πόντοι") {
+    const p1Points = p1Stats["Κερδισμένοι Πόντοι"] || 0;
+    const p2Points = p2Stats["Κερδισμένοι Πόντοι"] || 0;
+    const totalPoints = p1Points + p2Points;
+
+    const p1pct = totalPoints ? Math.round((p1Points / totalPoints) * 100) : 50;
+    const p2pct = totalPoints ? Math.round((p2Points / totalPoints) * 100) : 50;
+
+    p1Text = `${p1Points}/${totalPoints} (${p1pct}%)`;
+    p2Text = `${p2Points}/${totalPoints} (${p2pct}%)`;
+
+    barP1pct = p1pct;
+    barP2pct = p2pct;
+  }
+
+  // === Πόντοι με σερβίς ===
+  else if (stat.key === "Πόντοι με σερβίς") {
+    const p1Serve = p1Stats["Πόντοι με σερβίς"] || 0;
+    const p2Return = p2Stats["Πόντοι χωρίς σερβίς"] || 0;
+    const p2Serve = p2Stats["Πόντοι με σερβίς"] || 0;
+    const p1Return = p1Stats["Πόντοι χωρίς σερβίς"] || 0;
+
+    const p1Total = p1Serve + p2Return;
+    const p1pctInd = p1Total ? Math.round((p1Serve / p1Total) * 100) : 0;
+
+    const p2Total = p2Serve + p1Return;
+    const p2pctInd = p2Total ? Math.round((p2Serve / p2Total) * 100) : 0;
+
+    p1Text = `${p1Serve}/${p1Total} (${p1pctInd}%)`;
+    p2Text = `${p2Serve}/${p2Total} (${p2pctInd}%)`;
+
+    const totalForBar = p1Serve + p2Serve;
+    barP1pct = totalForBar ? Math.round((p1Serve / totalForBar) * 100) : 50;
+    barP2pct = 100 - barP1pct;
+  }
+
+  // === Πόντοι χωρίς σερβίς ===
+  else if (stat.key === "Πόντοι χωρίς σερβίς") {
+    const p1Return = p1Stats["Πόντοι χωρίς σερβίς"] || 0;
+    const p2Serve = p2Stats["Πόντοι με σερβίς"] || 0;
+    const p2Return = p2Stats["Πόντοι χωρίς σερβίς"] || 0;
+    const p1Serve = p1Stats["Πόντοι με σερβίς"] || 0;
+
+    const p1Total = p1Return + p2Serve;
+    const p1pctInd = p1Total ? Math.round((p1Return / p1Total) * 100) : 0;
+
+    const p2Total = p2Return + p1Serve;
+    const p2pctInd = p2Total ? Math.round((p2Return / p2Total) * 100) : 0;
+
+    p1Text = `${p1Return}/${p1Total} (${p1pctInd}%)`;
+    p2Text = `${p2Return}/${p2Total} (${p2pctInd}%)`;
+
+    const totalForBar = p1Return + p2Return;
+    barP1pct = totalForBar ? Math.round((p1Return / totalForBar) * 100) : 50;
+    barP2pct = 100 - barP1pct;
+  }
+
+  // === Default case ===
+  else {
+    const p1val = extractPercent(p1Stats[stat.key]);
+    const p2val = extractPercent(p2Stats[stat.key]);
+
+    p1Text = formatValue(p1Stats[stat.key]);
+    p2Text = formatValue(p2Stats[stat.key]);
+
+    const { p1pct, p2pct } = calcSplitBars(p1val, p2val);
+    barP1pct = p1pct;
+    barP2pct = p2pct;
+  }
+
+  // --- Δημιουργία DOM ---
+ // --- Δημιουργία DOM ---
+const row = document.createElement("div");
+row.className = "stat-row";
+
+// Αν είναι ένα από τα 4 συγκεκριμένα stats → δώσε και την κλάση small-stat
+if (["Ποσοστό 1ου σερβίς","Πόντοι με σερβίς","Πόντοι χωρίς σερβίς","Κερδισμένοι Πόντοι"].includes(stat.key)) {
+  row.classList.add("small-stat");
+}
+
+  const label = document.createElement("div");
+  label.className = "stat-label";
+  label.textContent = stat.label;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "bar-wrapper";
+
+const leftValue = document.createElement("div");
+leftValue.className = "stat-value";
+
+// Αν είναι small stat, δώσε ξεχωριστή κλάση για το αριστερό
+if (["Ποσοστό 1ου σερβίς","Πόντοι με σερβίς","Πόντοι χωρίς σερβίς","Κερδισμένοι Πόντοι"].includes(stat.key)) {
+    leftValue.classList.add("left-small-stat");
+}
+
+leftValue.textContent = p1Text;
+
+ 
+  const bar = document.createElement("div");
+  bar.className = "bar";
+
+  const fillLeft = document.createElement("div");
+  fillLeft.className = "bar-fill-left";
+  fillLeft.style.width = barP1pct + "%";
+
+  const fillRight = document.createElement("div");
+  fillRight.className = "bar-fill-right";
+  fillRight.style.width = barP2pct + "%";
+
+  bar.appendChild(fillLeft);
+  bar.appendChild(fillRight);
+
+  const rightValue = document.createElement("div");
+rightValue.className = "stat-value";
+
+// Αν είναι small stat, δώσε ξεχωριστή κλάση
+if (["Ποσοστό 1ου σερβίς","Πόντοι με σερβίς","Πόντοι χωρίς σερβίς","Κερδισμένοι Πόντοι"].includes(stat.key)) {
+    rightValue.classList.add("right-small-stat");
+}
+
+rightValue.textContent = p2Text;
+
+
+  wrapper.appendChild(leftValue);
+  wrapper.appendChild(bar);
+  wrapper.appendChild(rightValue);
+
+  row.appendChild(label);
+  row.appendChild(wrapper);
+  container.appendChild(row);
+});
+}
+
+function getPlayerNames() {
+  const match = JSON.parse(localStorage.getItem("currentMatch")) || {};
+  return {
+    player1: match.player1 || "Παίκτης 1",
+    player2: match.player2 || "Παίκτης 2"
+  };
+}
+
+
+
+
+  function resetStats() {
+    localStorage.setItem("statsPlayer1", JSON.stringify({}));
+    localStorage.setItem("statsPlayer2", JSON.stringify({}));
+    renderStats();
+  }
+
+  renderStats();
+
+
+</script>
+
+
+</body>
+</html>

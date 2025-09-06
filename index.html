@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tennis Scoretrack - Home</title>
+<style>
+/* --- Body & General --- */
+/* --- Body & General --- */
+body {
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* --- Header Box --- */
+.header-box {
+  background: transparent; /* όχι χρώμα ή εικόνα */
+  text-align: center;
+  color: #fff;
+  font-size: 4vw;
+  font-weight: bold;
+  padding: 2vh 0;
+}
+
+
+/* --- Buttons Layout --- */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Row with 2 buttons */
+.button-row {
+  display: flex;
+  width: 100%;
+  gap: 2vw; /* ποσοστό για απόσταση ανάμεσα στα κουμπιά */
+  margin-bottom: 2vh;
+}
+
+.half-btn {
+  flex: 1;
+  aspect-ratio: 1/1;
+  border-color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-size: 4vw;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 0.5vh 1vh rgba(0,0,0,0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 2vh;
+ 
+}
+
+/* Athletes button με εικόνα */
+.btn-athletes {
+  background-image: url('sinner.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Match History button με εικόνα */
+.btn-history {
+  background-image: url('djokovic.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Full width New Match button με εικόνα */
+.full-btn {
+  width: 100%;
+  aspect-ratio: 2/1;
+  font-size: 4.5vw;
+  border-color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 0.5vh 1vh rgba(0,0,0,0.8);
+  background-image: url('carlos.jpg');
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 1vh;
+  margin-top: 2vh;
+}
+
+/* --- Buttons Hover Effect --- */
+.half-btn:hover, .full-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 1vh 3vh rgba(0,0,0,0.4);
+}
+
+/* Responsive adjustments για πολύ μικρές οθόνες */
+@media (max-width: 400px) {
+  .header-box {
+    font-size: 5vw;
+    padding: 3vw 0;
+  }
+  .half-btn, .full-btn {
+    font-size: 5vw;
+  }
+}
+/* --- Footer Social Section --- */
+.social-footer {
+  margin-top: 5vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.find-us {
+  font-size: 2.5vw; /* μικρό κείμενο */
+  margin-bottom: 1vh;
+  margin-top: 20vh;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+.social-icons {
+  display: flex;
+  gap: 4vw; /* απόσταση μεταξύ εικονιδίων */
+
+}
+
+.social-icons img {
+  width: 8vw; /* responsive μέγεθος */
+  max-width: 30px; /* περιορισμός για desktop */
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.social-icons img:hover {
+  transform: scale(1.2); /* εφέ hover */
+}
+.social-icons img:active {
+  transform: scale(1.2); /* εφέ hover */
+}
+/* Logo container */
+.logo-container {
+  margin-top: 2vh; /* απόσταση από πάνω */
+  margin-bottom: 1vh; /* απόσταση από header */
+  text-align: center;
+}
+
+/* Logo image */
+.logo-img {
+  width: 45vw;      /* responsive μέγεθος ανάλογα με οθόνη */
+  margin-top: 20px;
+  display: flex;
+}
+
+.logo-img:hover {
+  transform: scale(1.05); /* μικρό εφέ hover */
+}
+
+</style>
+</head>
+<body>
+
+<!-- Header Box -->
+<!-- Logo πάνω από τον τίτλο -->
+<div class="logo-container">
+  <img src="logo.png" alt="Tennis Scoretrack Logo" class="logo-img">
+</div>
+
+<!-- Main Buttons -->
+<div class="button-container">
+  <div class="button-row">
+    <button type="button" class="half-btn btn-athletes" onclick="navigateAfterAnimation(this, 'athletes.html')">Athletes</button>
+    <button type="button" class="half-btn btn-history" onclick="navigateAfterAnimation(this, 'match_history.html')">Match History</button>
+  </div>
+  <button type="button" class="full-btn" onclick="navigateAfterAnimation(this, 'pregame.html')">New Match</button>
+</div>
+<!-- Footer Social Section -->
+<div class="social-footer">
+  <span class="find-us">Find us on:</span>
+  <div class="social-icons">
+    <a href="https://www.instagram.com/mantaioss/?next=%2F" target="_blank"><img src="instagram.png" alt="Instagram"></a>
+    <a href="https://www.twitter.com" target="_blank"><img src="twitter.png" alt="Twitter"></a>
+    <a href="https://www.facebook.com/profile.php?id=100011979138252&locale=el_GR" target="_blank"><img src="facebook.png" alt="Facebook"></a>
+  </div>
+</div>
+
+<script>
+// Λειτουργία για pop-up πριν την αλλαγή σελίδας
+function navigateAfterAnimation(btn, url) {
+  // Προσθέτει προσωρινά το active effect
+  btn.style.transform = 'scale(0.95)';
+  btn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+
+  // Μετά από 150ms μεταφέρει στη σελίδα
+  setTimeout(() => {
+    window.location.href = url;
+  }, 70);
+}
+</script>
+
+</body>
+</html>
